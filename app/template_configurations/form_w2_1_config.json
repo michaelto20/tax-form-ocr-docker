@@ -1,0 +1,142 @@
+{
+    "ssn" : {
+        "coord": [853, 31, 1785, 199],
+        "keywords":["employee", "social", "security", "number"],
+        "is_numeric": true
+    },
+    "ein" : {
+        "coord": [21, 203, 2144, 375],
+        "keywords":["employer", "identification", "number", "(ein)"],
+        "is_numeric": true
+    },
+    "wages" : {
+        "coord": [2146, 201, 3029, 375],
+        "keywords":["wages", "tips", "other", "compensation"],
+        "is_numeric": true
+    },
+    "fed_tax" : {
+        "coord": [3033, 203, 3904, 374],
+        "keywords":["federal", "income", "tax", "withheld"],
+        "is_numeric": true
+    },
+    "ssn_wages" : {
+        "coord": [2146, 379, 3028, 549],
+        "keywords": ["social", "security", "wages"],
+        "is_numeric": true
+    },
+    "ssn_tax_withheld" : {
+        "coord": [3030, 378, 3907, 548],
+        "keywords": ["social", "security", "tax", "withheld"],
+        "is_numeric": true
+    },
+    "medicare_wages" : {
+        "coord": [2153, 556, 3073, 715],
+        "keywords": ["medicare", "wages", "and", "tips"],
+        "is_numeric": true
+    },
+    "medicare_withheld" : {
+        "coord": [3060, 554, 3898, 714],
+        "keywords": ["medicare", "tax", "withheld"],
+        "is_numeric": true
+    },
+    "ssn_tips" : {
+        "coord": [2152, 727, 3023, 887],
+        "keywords": ["social", "security", "tips"],
+        "is_numeric": true
+    },
+    "allocated_tips" : {
+        "coord": [3037, 729, 3899, 882],
+        "keywords": ["allocated", "tips"],
+        "is_numeric": true
+    },
+    "verification_code" : {
+        "coord": [2153, 901, 3022, 1057],
+        "keywords": ["verification", "code"],
+        "is_numeric": true
+    },
+    "dependent_care_benefits" : {
+        "coord": [3036, 899, 3901, 1059],
+        "keywords": ["dependent", "care", "benefits"],
+        "is_numeric": true
+    },
+    "state_wages" : {
+        "coord": [1170, 1854, 1774, 2015],
+        "keywords": ["state", "wages", "tips", "etc"],
+        "is_numeric": true
+    },
+    "state_income_tax" : {
+        "coord": [1793, 1852, 2344, 2008],
+        "keywords": ["state", "income", "tax"],
+        "is_numeric": true
+    },
+    "local_wages" : {
+        "coord": [2359, 1852, 2970, 2008],
+        "keywords": ["local", "wages", "tips", "etc"],
+        "is_numeric": true
+    },
+    "local_income_tax" : {
+        "coord": [2985, 1856, 3537, 2008],
+        "keywords": ["local", "wages", "tips", "etc"],
+        "is_numeric": true
+    },
+    "locality_name" : {
+        "coord": [3553, 1854, 3901, 2008],
+        "keywords": ["locality", "name"],
+        "is_numeric": false
+    },
+    "employer_name_address" : {
+        "coord": [31, 382, 2140, 888],
+        "keywords": ["employer's", "name", "address", "and", "zip", "code"],
+        "is_numeric": false
+    },
+    "employee_name" : {
+        "coord": [32, 1070, 2139, 1839],
+        "keywords": ["employee's", "name", "first", "and", "initial", "last", "address", "zip", "code"],
+        "is_numeric": false
+    },
+    "control_number" : {
+        "coord": [32, 899, 2138, 1059],
+        "keywords": ["control", "number"],
+        "is_numeric": true
+    },
+    "nonqualified_plans" : {
+        "coord": [2152, 1073, 3022, 1229],
+        "keywords": ["nonqualified", "plans"],
+        "is_numeric": false
+    },
+    "box_12a" : {
+        "coord": [3299, 1077, 3899, 1227],
+        "keywords": ["force_parse"],
+        "is_numeric": true
+    },
+    "box_12b" : {
+        "coord": [3298, 1248, 3895, 1405],
+        "keywords": ["force_parse"],
+        "is_numeric": true
+    },
+    "box_12c" : {
+        "coord": [3298, 1424, 3900, 1575],
+        "keywords": ["force_parse"],
+        "is_numeric": true
+    },
+    "box_12d" : {
+        "coord": [3294, 1593, 3898, 1749],
+        "keywords": ["force_parse"],
+        "is_numeric": true
+    },
+    "other" : {
+        "coord": [2153, 1422, 3019, 1835],
+        "keywords": ["other"],
+        "is_numeric": false
+    },
+    "state" : {
+        "coord": [30, 1851, 223, 2010],
+        "keywords": ["state"],
+        "is_numeric": false
+    },
+    "employer_state_id" : {
+        "coord": [239, 1851, 1154, 2010],
+        "keywords": ["employer's","state", "id", "number"],
+        "is_numeric": true
+    }
+}

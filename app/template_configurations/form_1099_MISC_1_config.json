@@ -1,0 +1,118 @@
+{
+    "payer_info" : {
+        "coord": [144, 104, 815, 362],
+        "keywords":["payer", "name", "street", "address", "city", "or", "town", "state", "province", "country", "zip",
+        "foreign", "postal", "code", "telephone", "no."],
+        "is_numeric": false
+    },
+    "payer_tin" : {
+        "coord": [144, 369, 475, 495],
+        "keywords":["payer", "tin"],
+        "is_numeric": true
+    },
+    "recipient_tin" : {
+        "coord": [484, 371, 813, 491],
+        "keywords":["recipient", "tin"],
+        "is_numeric": true
+    },
+    "recipient_name" : {
+        "coord": [146, 505, 809, 599],
+        "keywords":["recipient", "name"],
+        "is_numeric": false
+    },
+    "recipient_address" : {
+        "coord": [144, 604, 807, 697],
+        "keywords": ["street", "address", "including", "apt", "no"],
+        "is_numeric": false
+    },
+    "recipient_city_zip" : {
+        "coord": [147, 703, 813, 791],
+        "keywords": ["city", "or", "state", "or", "province", "country", "and", "zip", "foreign", "code", "postal"],
+        "is_numeric": false
+    },
+    "account_number" : {
+        "coord": [145, 803, 574, 894],
+        "keywords": ["account", "number", "see", "instructions"],
+        "is_numeric": true
+    },
+    "rents" : {
+        "coord": [825, 104, 1096, 196],
+        "keywords": ["rents"],
+        "is_numeric": true
+    },
+    "royalties" : {
+        "coord": [824, 203, 1095, 296],
+        "keywords": ["royalties"],
+        "is_numeric": true
+    },
+    "other_income" : {
+        "coord": [824, 303, 1095, 361],
+        "keywords": ["other", "income"],
+        "is_numeric": true
+    },
+    "federal_income_tax_withheld" : {
+        "coord": [1105, 304, 1375, 361],
+        "keywords": ["federal", "income", "tax", "withheld"],
+        "is_numeric": true
+    },
+    "fishing_boat_proceeds" : {
+        "coord": [823, 370, 1095, 495],
+        "keywords": ["fishing", "boat", "proceeds"],
+        "is_numeric": true
+    },
+    "medical_heath_care_payments" : {
+        "coord": [1103, 370, 1375, 494],
+        "keywords": ["medical", "and", "health", "care", "payments"],
+        "is_numeric": true
+    },
+    "substitution_payments" : {
+        "coord": [1103, 502, 1376, 594],
+        "keywords": ["substitution", "payments", "in", "lieu", "of", "dividends", "or", "interest"],
+        "is_numeric": true
+    },
+    "corp_insurance_proceeds" : {
+        "coord": [824, 602, 1096, 696],
+        "keywords": ["gross", "proceeds", "paid", "to", "an", "attorney"],
+        "is_numeric": true
+    },
+    "attorney_proceeds" : {
+        "coord": [1103, 602, 1370, 693],
+        "keywords": ["gross", "proceeds", "paid", "to", "an", "attorney"],
+        "is_numeric": true
+    },
+    "fish_for_resale" : {
+        "coord": [825, 703, 1095, 794],
+        "keywords": ["fish", "purchased", "for", "resale"],
+        "is_numeric": true
+    },
+    "section_409_deferrals" : {
+        "coord": [1105, 704, 1375, 792],
+        "keywords": ["section", "409A", "deferrals"],
+        "is_numeric": true
+    },
+    "golden_parachute_payments" : {
+        "coord": [823, 804, 1094, 896],
+        "keywords": ["excess", "golden", "parachute", "payments"],
+        "is_numeric": true
+    },
+    "nonqualified_deferred_compensation" : {
+        "coord": [1104, 803, 1374, 895],
+        "keywords": ["nonqualified", "deferred", "compensation"],
+        "is_numeric": true
+    },
+    "state_tax_withheld" : {
+        "coord": [822, 902, 1092, 961],
+        "keywords": ["state", "tax", "withheld"],
+        "is_numeric": true
+    },
+    "state_number" : {
+        "coord": [1104, 904, 1375, 963],
+        "keywords": ["state", "payer", "no."],
+        "is_numeric": true
+    },
+    "state_income" : {
+        "coord": [1384, 903, 1595, 961],
+        "keywords": ["state", "income"],
+        "is_numeric": true
+    }
+}
