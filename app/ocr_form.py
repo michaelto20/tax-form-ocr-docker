@@ -9,9 +9,9 @@ import os
 import time
 from drivers_license_scanner  import get_drivers_license_info
 from joblib import Parallel, delayed
+# from Pool import Pool
 
 
-# pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract'
 config = r'-l eng --oem 1 --psm 6'
 SYMBOLS_TO_STRIP = r'!@#$,%^&*()-_+=`~|{}\/?'
 TRANSLATION_TABLE = dict.fromkeys(map(ord, SYMBOLS_TO_STRIP), None)
@@ -26,6 +26,8 @@ if IS_LOCAL:
 	NO_TEMPLATE_MATCH_DIR = os.path.join('app', NO_TEMPLATE_MATCH_DIR)
 	TEMPLATES_BASE_DIR = os.path.join('app', TEMPLATES_BASE_DIR)
 	CONFIG_DIR = os.path.join('app', CONFIG_DIR)
+	pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract'
+
 
 
 def cleanup_text(text):
@@ -109,6 +111,7 @@ def ocr_tax_form(image, form_type, image_file_path):
 			results[loc["id"]] = (text, loc)
 
 	# loop over the results
+	form_info = {}
 	for (locID, result) in results.items():
 		# unpack the result tuple
 		(text, loc) = result
@@ -133,7 +136,10 @@ def ocr_tax_form(image, form_type, image_file_path):
 			if len(line) != 0:
 				if (loc["is_numeric"] == True and check_is_float(line)) or loc["is_numeric"] == False:
 					print("{}".format(line))
-
+					if loc["id"] not in form_info:
+						form_info[loc["id"]] = line
+					else:
+						form_info[loc["id"]] += line
 					# draw the line on the output image
 					startY = y + (i * 70) + 40
 					cv2.putText(aligned, line, (x, startY),
@@ -145,12 +151,13 @@ def ocr_tax_form(image, form_type, image_file_path):
 	# cv2.imshow("Output", imutils.resize(aligned, width=700))
 	# cv2.imshow("Template", imutils.resize(template, width=700))
 	# cv2.waitKey(0)
-	return "success", aligned
+	return "success", aligned, form_info
 
 def ocr_image_segments(aligned, OCR_LOCATIONS):
-	parsingResults = []
 
+	parsingResults = []
 	def process_ocr_location(loc):
+
 		# extract the OCR ROI from the aligned image
 		(x, y, x2, y2) = loc.bbox
 		w = x2 - x
@@ -183,8 +190,19 @@ def ocr_image_segments(aligned, OCR_LOCATIONS):
 				# text if the line is *not* empty
 				parsingResults.append((loc, line))
 
+		return parsingResults
+
 
 	# loop over the locations of the document we are going to OCR
+	# n = len(OCR_LOCATIONS)
+	# num_processes = 8
+	# sizeSegment = n//num_processes
+
+	# jobs = []
+	# for i in range(0, num_processes):
+	# 	jobs.append((i*sizeSegment+1, (i+1)*sizeSegment))
+	
+	# pool = Pool(num_processes).map(process_ocr_location, jobs)
 	Parallel(n_jobs=8, require='sharedmem', prefer="threads")(
 		delayed(process_ocr_location)(loc) for loc in OCR_LOCATIONS)
 
@@ -201,15 +219,15 @@ def get_best_template(form_templates_path, image):
 
 	# get all templates of the same form and see which one matches best
 	print(form_templates_path)
-	print(f'cwd: {os.getcwd()}')
-	print(f'app/templates/w2 exists: {os.path.isdir("app/templates/w2")}')
-	print(f'app/templates/w2/ exists: {os.path.isdir("app/templates/w2/")}')
-	print(f'templates/w2 exists: {os.path.isdir("templates/w2")}')
-	print(f'templates/w2/ exists: {os.path.isdir("templates/w2/")}')
-	print(f'cwd + app/templates/w2 exists: {os.path.isdir(os.path.join(os.getcwd(), "app/templates/w2"))}')
-	print(f'cwd + app/templates/w2/ exists: {os.path.isdir(os.path.join(os.getcwd(), "app/templates/w2/"))}')
-	print(f'templates/w2 exists: {os.path.isdir(os.path.join(os.getcwd(), "templates/w2"))}')
-	print(f'templates/w2/ exists: {os.path.isdir(os.path.join(os.getcwd(),"templates/w2/"))}')
+	# print(f'cwd: {os.getcwd()}')
+	# print(f'app/templates/w2 exists: {os.path.isdir("app/templates/w2")}')
+	# print(f'app/templates/w2/ exists: {os.path.isdir("app/templates/w2/")}')
+	# print(f'templates/w2 exists: {os.path.isdir("templates/w2")}')
+	# print(f'templates/w2/ exists: {os.path.isdir("templates/w2/")}')
+	# print(f'cwd + app/templates/w2 exists: {os.path.isdir(os.path.join(os.getcwd(), "app/templates/w2"))}')
+	# print(f'cwd + app/templates/w2/ exists: {os.path.isdir(os.path.join(os.getcwd(), "app/templates/w2/"))}')
+	# print(f'templates/w2 exists: {os.path.isdir(os.path.join(os.getcwd(), "templates/w2"))}')
+	# print(f'templates/w2/ exists: {os.path.isdir(os.path.join(os.getcwd(),"templates/w2/"))}')
 	for filename in os.listdir(form_templates_path):
 		template_path = os.path.join(form_templates_path, filename)
 		print(f'template_path: {template_path}')
@@ -256,8 +274,9 @@ if __name__ == "__main__":
 
 	form_type = args["form"]
 
-	result, image = ocr_tax_form(image, form_type, args["image"])
+	result, image, form_info = ocr_tax_form(image, form_type, args["image"])
 	print(result)
+	print(form_info)
 	end = time.time()
 	print(f'time: {end - start}')
 	try:

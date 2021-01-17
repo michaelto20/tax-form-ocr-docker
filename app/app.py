@@ -24,21 +24,22 @@ def handler(event, context):
         print('get form type')
         form_type = request_body['form_type']
         
-        print('begin ocr formx')
-        result, image = ocr_tax_form(image, form_type, '')
+        print('begin ocr form')
+        result, image, form_info = ocr_tax_form(image, form_type, '')
 
         print('finished ocr form')
 
     except Exception as e:
         print('threw exception')
         print(f'{e}')
+        print(f'Error Message: {e.message}')
 
 
     print('about to send resonse back to api')
     
 
     body = {
-        "message": result
+        "message": form_info
     }
 
     response = {
