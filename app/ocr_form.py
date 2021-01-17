@@ -13,7 +13,7 @@ from joblib import Parallel, delayed
 
 
 config = r'-l eng --oem 1 --psm 6'
-SYMBOLS_TO_STRIP = r'!@#$,%^&*()-_+=`~|{}\/?'
+SYMBOLS_TO_STRIP = r'!@#$,%^&*()-_+=`~|{}\/?—'
 TRANSLATION_TABLE = dict.fromkeys(map(ord, SYMBOLS_TO_STRIP), None)
 CONFIG_DIR = 'template_configurations'
 TEMPLATES_BASE_DIR = 'templates'
@@ -21,7 +21,7 @@ W2_TEMPLATES_DIR = 'w2'
 FORM_1099_TEMPLATES_DIR = 'form_1099_MISC'
 NO_TEMPLATE_MATCH_DIR = 'no_template_match'
 template_similarity_threshold = 220
-IS_LOCAL = True
+IS_LOCAL = False
 if IS_LOCAL:
 	NO_TEMPLATE_MATCH_DIR = os.path.join('app', NO_TEMPLATE_MATCH_DIR)
 	TEMPLATES_BASE_DIR = os.path.join('app', TEMPLATES_BASE_DIR)
@@ -37,16 +37,19 @@ def cleanup_text(text):
 	return text.translate(TRANSLATION_TABLE)
 
 def fix_image_dimensions(image):
-	# if image is too large, downsize it
+	# resize image if too far from optimal size
+	# only checking height assumes image dimensions aren't crazy
+	optimal_height = 2000	# size in pixels
 	print(f'Image shape: {image.shape}')
 	h,w,c = image.shape
-	if w >=3000 or h >= 3000:
-		print('Reducing image size by 80%')
-		image = cv2.resize(image, (0,0), fx = 0.8, fy = 0.8)
+	if h <= 1900 or h >= 2200:
+		print('Changing image\'s size')
+		ratio = optimal_height / h
+		image = cv2.resize(image, (0,0), fx = ratio, fy = ratio)
 
-	elif w < 1500 or h < 1500:
-		print('Enlarging image')
-		image = cv2.resize(image, (0,0), fx = 1.2, fy = 1.2)
+	# elif w < 1600 or h < 1600:
+	# 	print('Enlarging image')
+	# 	image = cv2.resize(image, (0,0), fx = 1.2, fy = 1.2)
 	
 	return image
 
