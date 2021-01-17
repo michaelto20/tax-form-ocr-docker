@@ -27,27 +27,42 @@ class BarCodeReader():
             jar_path + "javase-*-jar-with-dependencies.jar")
             
         if is_local:
-            jar_filename = os.path.abspath(os.path.join('src', 'barcode_reader', jar_filename))
+            jar_filename = os.path.abspath(os.path.join('app', 'barcode_reader', jar_filename))
         else:
             # in a serverless function, layers are in the opt folder
-            jar_filename = os.path.join('opt', 'barcode_reader', jar_filename)
+            jar_filename = os.path.join('barcode_reader', jar_filename)
+        print(f'jar file exists - {jar_filename}: {os.path.exists(jar_filename)}')
 
         self.lib_path = jar_filename
 
-    def decode(self, filename_pattern):
-        filenames = glob.glob(os.path.abspath(filename_pattern))
-        if len(filenames) == 0:
-            print("File not found!")
-            results = None
+    def decode(self, filename):
+        # filenames = glob.glob(os.path.abspath(filename_pattern))
+        # if len(filenames) == 0:
+        #     print("File not found!")
+        #     results = None
 
-        elif len(filenames) == 1:
-            results = self._decode(filenames[0].replace('\\', '/'))
+        # elif len(filenames) == 1:
+        # print(f'filename: {filename}')
+        # print(f'file exists: {os.path.exists(filename)}')
+        # filename = os.path.join(os.getcwd(), filename)
+        # print(f'full filename to be parsed: {filename}')
+        # print(f'file exists: {os.path.exists(filename)}')
+        # filename = os.path.join('../', filename)
+        # print(f'filename: {filename}')
+        # print(f'file exists: {os.path.exists(filename)}')
 
-        else:
-            results = Parallel(n_jobs=-1)(
-                delayed(self._decode)(filename.replace('\\', '/'))
-                for filename in filenames)
+        # filename = filename.replace('\\', '/')
+        filename = "../../tmp/" + filename
+        print(f'filename isside reader: {filename}')
+        print(f'file exists: {filename}')
 
+        results = self._decode(filename)
+        # results = self._decode(filename.replace('\\', '/'))
+
+        # else:
+        #     results = Parallel(n_jobs=-1)(
+        #         delayed(self._decode)(filename.replace('\\', '/'))
+        #         for filename in filenames)
         return results
 
     def _decode(self, filename):

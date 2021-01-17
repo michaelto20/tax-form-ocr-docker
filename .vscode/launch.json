@@ -11,8 +11,8 @@
             "program": "${file}",
             "console": "integratedTerminal",
             // "args": ["--image", "app/scans/form_1099_MISC.png", "--form", "1099_MISC"]
-            "args": ["--image", "app/scans/scan_01_resized.jpg", "--form", "w2"]
-            // "args": ["--image", "app/scans/scan_drivers_license_ga_rotated_180.jpg", "--form", "dl"]
+            // "args": ["--image", "app/scans/scan_01_resized.jpg", "--form", "w2"]
+            "args": ["--image", "app/scans/scan_drivers_license_ga_rotated_180.jpg", "--form", "dl"]
         }
     ]
 }

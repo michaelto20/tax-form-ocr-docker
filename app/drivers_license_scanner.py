@@ -1,10 +1,13 @@
 import numpy as numpy
 import cv2
 from barcode_reader.reader import BarCodeReader
+import os
 
 
 def get_drivers_license_info(image_path, is_local):
 # def get_drivers_license_info(image_path):
+    print('inside get_drivers_license_info')
+    print(f'does image still exist: {os.path.exists("../tmp/" + image_path)}')
     reader = BarCodeReader(is_local)
     # dlstring = reader.decode_image(image_path)
     dlstring = reader.decode(image_path)

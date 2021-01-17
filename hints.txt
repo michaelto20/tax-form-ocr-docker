@@ -1,0 +1,3 @@
+run bash in container from command line
+docker exec -t -i mycontainer /bin/bash
+docker run -it --entrypoint /bin/bash a2330cc62cfe

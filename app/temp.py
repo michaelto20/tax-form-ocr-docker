@@ -2,7 +2,7 @@ import base64
 import cv2
 
 # encode image to base 64
-image = cv2.imread(r'C:\Development\tax-form-ocr-docker\app\scans\scan_01_resized2.jpg')
+image = cv2.imread(r'C:\Development\tax-form-ocr-docker\app/scans/scan_drivers_license_ga_resized.jpg')
 image_encoded = base64.b64encode(image)
 with open ('image_encoded.txt', 'a',) as f:
     f.write(str(image_encoded))

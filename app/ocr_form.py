@@ -50,11 +50,15 @@ def ocr_tax_form(image, form_type, image_file_path):
 		form_templates_path = os.path.join(TEMPLATES_BASE_DIR, W2_TEMPLATES_DIR)
 	elif form_type == "dl":
 		# write to local file for barcode reader
-		filename = 'temp.png'
-		cv2.imwrite(filename, image)
+		filename = f'{time.time()}temp.png'
+		if IS_LOCAL:
+			filename = os.path.join('app', filename)
+		print(f"about to write file {filename}")
+		cv2.imwrite('../tmp/' + filename, image)
+		# print(f'file exists after saving to disk: {os.path.exists(filename)}')
 		results = get_drivers_license_info(filename,IS_LOCAL)
-		os.remove(filename)
-		return results, None
+		os.remove('../tmp/' + filename)
+		return "success", None, results
 	elif form_type == "1099_MISC":
 		form_templates_path = os.path.join(TEMPLATES_BASE_DIR, FORM_1099_TEMPLATES_DIR)
 	else:

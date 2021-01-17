@@ -136,5 +136,6 @@ RUN pip3 install awslambdaric
 
 # ENTRYPOINT [ "/var/lang/bin/python", "-m", "awslambdaric" ]
 ENTRYPOINT [ "/usr/bin/python3", "-m", "awslambdaric" ]
+# ENTRYPOINT [ "/bin/bash" ]
 # ENTRYPOINT [ "python3"]
 CMD [ "app.handler" ]

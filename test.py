@@ -5,6 +5,7 @@ import cv2
 
 # encode image to base 64
 image = cv2.imread(r'C:\Development\tax-form-ocr-docker\app\scans\scan_01_resized.jpg')
+# image = cv2.imread(r'C:\Development\tax-form-ocr-docker\app\scans\scan_drivers_license_ga_rotated_180.jpg')
 # image_encoded = base64.b64encode(image)
 # _, img_encoded = cv2.imencode('.jpg', image)
 img_string = base64.b64encode(cv2.imencode('.jpg', image)[1]).decode()
