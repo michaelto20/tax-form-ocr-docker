@@ -6,6 +6,7 @@ import subprocess
 import urllib.request
 from inspect import getsourcefile
 from os.path import abspath
+# import time
 
 from joblib import Parallel, delayed
 
@@ -21,6 +22,7 @@ class BarCodeReader():
 
     def __init__(self, is_local):
         """Prepare necessary jar file."""
+        self.is_local = is_local
         jar_filename = "javase-3.4.1-SNAPSHOT-jar-with-dependencies.jar"
         cache_dir = os.path.join(os.path.expanduser('~'), '.local').replace(' ', '%20') 
         res = glob.glob(
@@ -52,11 +54,21 @@ class BarCodeReader():
         # print(f'file exists: {os.path.exists(filename)}')
 
         # filename = filename.replace('\\', '/')
-        filename = "../../tmp/" + filename
-        print(f'filename isside reader: {filename}')
-        print(f'file exists: {filename}')
+        path_to_process = "../../tmp/" + filename
+        if self.is_local:
+            path_to_process = os.path.join(os.getcwd(), 'app', 'tmp', filename)
+            path_to_process = path_to_process.replace('\\', '/')
+        print(f'filename isside reader: {path_to_process}')
+        print(f'file exists: {os.path.exists(path_to_process)}')
+        # some times the image hasn't finished writing to the tmp directory, so wait here unil
+        # that finishes
+        # sleep_iterations_allow = 2000 # 2 seconds
+        # sleep_iterations = 0
+        # while not os.path.exists(filename) and sleep_iterations < sleep_iterations_allow:
+        #     sleep_iterations += 1
+        #     time.sleep(0.01)
 
-        results = self._decode(filename)
+        results = self._decode(path_to_process)
         # results = self._decode(filename.replace('\\', '/'))
 
         # else:

@@ -21,7 +21,7 @@ W2_TEMPLATES_DIR = 'w2'
 FORM_1099_TEMPLATES_DIR = 'form_1099_MISC'
 NO_TEMPLATE_MATCH_DIR = 'no_template_match'
 template_similarity_threshold = 220
-IS_LOCAL = False
+IS_LOCAL = True
 if IS_LOCAL:
 	NO_TEMPLATE_MATCH_DIR = os.path.join('app', NO_TEMPLATE_MATCH_DIR)
 	TEMPLATES_BASE_DIR = os.path.join('app', TEMPLATES_BASE_DIR)
@@ -36,7 +36,27 @@ def cleanup_text(text):
 	# return "".join([c if ord(c) < 128 else "" for c in text]).strip()
 	return text.translate(TRANSLATION_TABLE)
 
+def fix_image_dimensions(image):
+	# if image is too large, downsize it
+	print(f'Image shape: {image.shape}')
+	h,w,c = image.shape
+	if w >=3000 or h >= 3000:
+		print('Reducing image size by 80%')
+		image = cv2.resize(image, (0,0), fx = 0.8, fy = 0.8)
+
+	elif w < 1500 or h < 1500:
+		print('Enlarging image')
+		image = cv2.resize(image, (0,0), fx = 1.2, fy = 1.2)
+	
+	return image
+
+
 def ocr_tax_form(image, form_type, image_file_path):
+	# some times images that are too large or too small mess up later processing
+	print('Checking image dimensions')
+	image = fix_image_dimensions(image)
+
+
 	# create a named tuple which we can use to create locations of the
 	# input document which we wish to OCR
 	OCRLocation = namedtuple("OCRLocation", ["id", "bbox",
@@ -51,13 +71,14 @@ def ocr_tax_form(image, form_type, image_file_path):
 	elif form_type == "dl":
 		# write to local file for barcode reader
 		filename = f'{time.time()}temp.png'
+		path_to_save = '../tmp/' + filename
 		if IS_LOCAL:
-			filename = os.path.join('app', filename)
+			path_to_save = os.path.join('app', 'tmp', filename)
 		print(f"about to write file {filename}")
-		cv2.imwrite('../tmp/' + filename, image)
+		cv2.imwrite(path_to_save, image)
 		# print(f'file exists after saving to disk: {os.path.exists(filename)}')
 		results = get_drivers_license_info(filename,IS_LOCAL)
-		os.remove('../tmp/' + filename)
+		os.remove(path_to_save)
 		return "success", None, results
 	elif form_type == "1099_MISC":
 		form_templates_path = os.path.join(TEMPLATES_BASE_DIR, FORM_1099_TEMPLATES_DIR)
@@ -75,6 +96,7 @@ def ocr_tax_form(image, form_type, image_file_path):
 		return "Cannot read the image at this time, please try again later", None
 
 	# get matching config for template
+	print('Getting template configs')
 	ocr_configs = get_ocr_configs(template_name)
 
 	OCR_LOCATIONS = []
