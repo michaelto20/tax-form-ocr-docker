@@ -7,7 +7,9 @@ import cv2
 import json
 import os
 import time
+import numpy as np
 from drivers_license_scanner  import get_drivers_license_info
+# from pyzbar.pyzbar import decode, ZBarSymbol
 from joblib import Parallel, delayed
 # from Pool import Pool
 
@@ -21,7 +23,7 @@ W2_TEMPLATES_DIR = 'w2'
 FORM_1099_TEMPLATES_DIR = 'form_1099_MISC'
 NO_TEMPLATE_MATCH_DIR = 'no_template_match'
 template_similarity_threshold = 220
-IS_LOCAL = False
+IS_LOCAL = True
 if IS_LOCAL:
 	NO_TEMPLATE_MATCH_DIR = os.path.join('app', NO_TEMPLATE_MATCH_DIR)
 	TEMPLATES_BASE_DIR = os.path.join('app', TEMPLATES_BASE_DIR)
@@ -42,6 +44,7 @@ def fix_image_dimensions(image):
 	optimal_height = 2000	# size in pixels
 	print(f'Image shape: {image.shape}')
 	h,w,c = image.shape
+
 	if h <= 1900 or h >= 2200:
 		print('Changing image\'s size')
 		ratio = optimal_height / h
@@ -53,12 +56,15 @@ def fix_image_dimensions(image):
 	
 	return image
 
+def binarize_image(image):
+	# turn to grayscale first
+	gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+	return cv2.threshold(gray_image, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
 
 def ocr_tax_form(image, form_type, image_file_path):
 	# some times images that are too large or too small mess up later processing
 	print('Checking image dimensions')
 	image = fix_image_dimensions(image)
-
 
 	# create a named tuple which we can use to create locations of the
 	# input document which we wish to OCR
@@ -185,6 +191,7 @@ def ocr_tax_form(image, form_type, image_file_path):
 def ocr_image_segments(aligned, OCR_LOCATIONS):
 
 	parsingResults = []
+	kernel = np.ones((2,2),np.uint8)
 	def process_ocr_location(loc):
 
 		# extract the OCR ROI from the aligned image
@@ -196,8 +203,21 @@ def ocr_image_segments(aligned, OCR_LOCATIONS):
 		roi = aligned[y:y + h, x:x + w]
 		
 		# OCR the ROI using Tesseract
-		rgb = cv2.cvtColor(roi, cv2.COLOR_BGR2RGB)
-		text = pytesseract.image_to_string(rgb)
+		print('Binarize Image')
+		binarized_roi = binarize_image(roi)
+
+		gray_roi = cv2.cvtColor(binarized_roi, cv2.COLOR_BGR2RGB)
+		black_rgb = cv2.bitwise_not(gray_roi)
+		opened_black = cv2.morphologyEx(black_rgb, cv2.MORPH_OPEN, kernel)
+		# erosion = cv2.erode(rgb,kernel,iterations = 1)
+		opened = cv2.bitwise_not(opened_black)
+		
+		#TODO: Add white border to image to improve OCR
+		border_size = 5
+		opened_border = cv2.copyMakeBorder(opened,
+		border_size,border_size,border_size,border_size,
+		borderType=cv2.BORDER_CONSTANT, value=(255, 255, 255))
+		text = pytesseract.image_to_string(opened_border)
 
 		# break the text into lines and loop over them
 		for line in text.split("\n"):
@@ -232,7 +252,7 @@ def ocr_image_segments(aligned, OCR_LOCATIONS):
 	# 	jobs.append((i*sizeSegment+1, (i+1)*sizeSegment))
 	
 	# pool = Pool(num_processes).map(process_ocr_location, jobs)
-	Parallel(n_jobs=8, require='sharedmem', prefer="threads")(
+	Parallel(n_jobs=1, require='sharedmem', prefer="threads")(
 		delayed(process_ocr_location)(loc) for loc in OCR_LOCATIONS)
 
 	return parsingResults
@@ -280,7 +300,7 @@ def check_is_float(text):
 		return False
 
 def get_ocr_configs(template_name):
-	template_name = template_name.split('.png')[0]
+	template_name = template_name.split('.')[0]
 	config_path = os.path.join(CONFIG_DIR, template_name + "_config.json")
 	ocr_configs = None
 	with open (config_path, "r") as config_file_handler:
@@ -310,7 +330,8 @@ if __name__ == "__main__":
 	print(f'time: {end - start}')
 	try:
 		if image.shape[0] != 0:
-			cv2.imshow("output", imutils.resize(image, width=1000))
+			cv2.imshow("output", imutils.resize(image, width=500, height=500))
+			# cv2.imshow("output", imutils.resize(image, width=2000))
 			cv2.waitKey(0)
 	except:
 		print("No output image")
