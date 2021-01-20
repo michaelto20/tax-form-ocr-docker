@@ -86,7 +86,7 @@ def get_image_similarity_score(image1, image2):
 	# kp2, des2 = finder.detectAndCompute(img2,None)
 
     # BFMatcher with default params
-	print('breate BFMatcher')
+	print('create BFMatcher')
 	bf = cv2.BFMatcher()
 	matches = bf.knnMatch(des1,des2, k=2)
 

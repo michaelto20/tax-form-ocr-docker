@@ -10,8 +10,9 @@ import time
 import numpy as np
 from drivers_license_scanner  import get_drivers_license_info
 # from pyzbar.pyzbar import decode, ZBarSymbol
-from joblib import Parallel, delayed
-# from Pool import Pool
+from multiprocessing import Process, Pipe
+import concurrent.futures
+from parallel_processing import process_ocr_location
 
 
 config = r'-l eng --oem 1 --psm 6'
@@ -23,12 +24,17 @@ W2_TEMPLATES_DIR = 'w2'
 FORM_1099_TEMPLATES_DIR = 'form_1099_MISC'
 NO_TEMPLATE_MATCH_DIR = 'no_template_match'
 template_similarity_threshold = 220
-IS_LOCAL = False
+IS_LOCAL = True
 if IS_LOCAL:
 	NO_TEMPLATE_MATCH_DIR = os.path.join('app', NO_TEMPLATE_MATCH_DIR)
 	TEMPLATES_BASE_DIR = os.path.join('app', TEMPLATES_BASE_DIR)
 	CONFIG_DIR = os.path.join('app', CONFIG_DIR)
 	pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract'
+
+# create a named tuple which we can use to create locations of the
+	# input document which we wish to OCR
+OCRLocation = namedtuple("OCRLocation", ["id", "bbox",
+	"filter_keywords", "is_numeric"])
 
 
 
@@ -56,20 +62,11 @@ def fix_image_dimensions(image):
 	
 	return image
 
-def binarize_image(image):
-	# turn to grayscale first
-	gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-	return cv2.threshold(gray_image, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
 
 def ocr_tax_form(image, form_type, image_file_path):
 	# some times images that are too large or too small mess up later processing
 	print('Checking image dimensions')
 	image = fix_image_dimensions(image)
-
-	# create a named tuple which we can use to create locations of the
-	# input document which we wish to OCR
-	OCRLocation = namedtuple("OCRLocation", ["id", "bbox",
-		"filter_keywords", "is_numeric"])
 
 	# get form ocr configuration
 	print("[INFO] getting OCR configuration...")
@@ -188,72 +185,29 @@ def ocr_tax_form(image, form_type, image_file_path):
 	# cv2.waitKey(0)
 	return "success", aligned, form_info
 
+
 def ocr_image_segments(aligned, OCR_LOCATIONS):
 
+	processes = []
+	parent_connections = []
 	parsingResults = []
-	kernel = np.ones((2,2),np.uint8)
-	def process_ocr_location(loc):
+	for loc in OCR_LOCATIONS:
+		parent_conn, child_conn = Pipe()
+		parent_connections.append(parent_conn)
 
-		# extract the OCR ROI from the aligned image
-		(x, y, x2, y2) = loc.bbox
-		w = x2 - x
-		h = y2 - y
+		process = Process(target=process_ocr_location, args=(loc, aligned, child_conn,)) 
+		processes.append(process)
 
-		# (x, y, w, h) = loc.bbox
-		roi = aligned[y:y + h, x:x + w]
-		
-		# OCR the ROI using Tesseract
-		print('Binarize Image')
-		binarized_roi = binarize_image(roi)
+	for process in processes:
+		process.start()
 
-		gray_roi = cv2.cvtColor(binarized_roi, cv2.COLOR_BGR2RGB)
-		black_rgb = cv2.bitwise_not(gray_roi)
-		opened_black = cv2.morphologyEx(black_rgb, cv2.MORPH_OPEN, kernel)
-		# erosion = cv2.erode(rgb,kernel,iterations = 1)
-		opened = cv2.bitwise_not(opened_black)
-		
-		#TODO: Add white border to image to improve OCR
-		border_size = 5
-		opened_border = cv2.copyMakeBorder(opened,
-		border_size,border_size,border_size,border_size,
-		borderType=cv2.BORDER_CONSTANT, value=(255, 255, 255))
-		text = pytesseract.image_to_string(opened_border)
+	# make sure that all processes have finished
+	for process in processes:
+		process.join()
 
-		# break the text into lines and loop over them
-		for line in text.split("\n"):
-			# if the line is empty, ignore it
-			if len(line) == 0:
-				continue
-
-			# convert the line to lowercase and then check to see if the
-			# line contains any of the filter keywords (these keywords
-			# are part of the *form itself* and should be ignored)
-			lower = line.lower()
-			count = sum([lower.count(x) for x in loc.filter_keywords])
-
-			# if the count is zero than we know we are *not* examining a
-			# text field that is part of the document itself (ex., info,
-			# on the field, an example, help text, etc.)
-			if count == 0 or loc.filter_keywords[0] == 'force_parse':
-				# update our parsing results dictionary with the OCR'd
-				# text if the line is *not* empty
-				parsingResults.append((loc, line))
-
-		return parsingResults
-
-
-	# loop over the locations of the document we are going to OCR
-	# n = len(OCR_LOCATIONS)
-	# num_processes = 8
-	# sizeSegment = n//num_processes
-
-	# jobs = []
-	# for i in range(0, num_processes):
-	# 	jobs.append((i*sizeSegment+1, (i+1)*sizeSegment))
-	
-	# pool = Pool(num_processes).map(process_ocr_location, jobs)
-	Parallel(n_jobs=1, require='sharedmem', prefer="threads")(
-		delayed(process_ocr_location)(loc) for loc in OCR_LOCATIONS)
+	# get results back from child process
+	for parent_conn in parent_connections:
+		parsingResults.append(parent_conn.recv())
 
 	return parsingResults
 
@@ -268,29 +222,40 @@ def get_best_template(form_templates_path, image):
 
 	# get all templates of the same form and see which one matches best
 	print(form_templates_path)
-	# print(f'cwd: {os.getcwd()}')
-	# print(f'app/templates/w2 exists: {os.path.isdir("app/templates/w2")}')
-	# print(f'app/templates/w2/ exists: {os.path.isdir("app/templates/w2/")}')
-	# print(f'templates/w2 exists: {os.path.isdir("templates/w2")}')
-	# print(f'templates/w2/ exists: {os.path.isdir("templates/w2/")}')
-	# print(f'cwd + app/templates/w2 exists: {os.path.isdir(os.path.join(os.getcwd(), "app/templates/w2"))}')
-	# print(f'cwd + app/templates/w2/ exists: {os.path.isdir(os.path.join(os.getcwd(), "app/templates/w2/"))}')
-	# print(f'templates/w2 exists: {os.path.isdir(os.path.join(os.getcwd(), "templates/w2"))}')
-	# print(f'templates/w2/ exists: {os.path.isdir(os.path.join(os.getcwd(),"templates/w2/"))}')
-	for filename in os.listdir(form_templates_path):
-		template_path = os.path.join(form_templates_path, filename)
-		print(f'template_path: {template_path}')
-		candidate_template = cv2.imread(template_path)
-		print(f'getting similarity score')
-		score = get_image_similarity_score(candidate_template, image)
+	
+	with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+		future_form_templates_path = {executor.submit(parallel_get_best_template, form_templates_path, filename,image): filename for filename in os.listdir(form_templates_path)}
+		for future in concurrent.futures.as_completed(future_form_templates_path):
+			# url = future_form_templates_path[future]
+			try:
+				temp = future.result()
+				score, candidate_template, filename = temp
+				if score > best_similarity_score:
+					template = candidate_template
+					best_similarity_score = score
+					template_name = filename
+			except Exception as exc:
+				print('blew up in parallel processing')
+				print(exc.message)
+			
+	# for filename in os.listdir(form_templates_path):
+	# 	template_path = os.path.join(form_templates_path, filename)
+	# 	print(f'template_path: {template_path}')
+	# 	candidate_template = cv2.imread(template_path)
+	# 	print(f'getting similarity score')
+	# 	score = get_image_similarity_score(candidate_template, image)
 
-		if score > best_similarity_score:
-			template = candidate_template
-			best_similarity_score = score
-			template_name = filename
 
 	print('finished finding best template')
 	return template, template_name, best_similarity_score
+
+def parallel_get_best_template(form_templates_path, filename,image):
+	template_path = os.path.join(form_templates_path, filename)
+	print(f'template_path: {template_path}')
+	candidate_template = cv2.imread(template_path)
+	print(f'getting similarity score')
+	score = get_image_similarity_score(candidate_template, image)
+	return score, candidate_template, filename
 
 def check_is_float(text):
 	try:
