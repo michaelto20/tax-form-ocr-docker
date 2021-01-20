@@ -10,7 +10,6 @@ import time
 import numpy as np
 from drivers_license_scanner  import get_drivers_license_info
 # from pyzbar.pyzbar import decode, ZBarSymbol
-from multiprocessing import Process, Pipe
 import concurrent.futures
 from parallel_processing import process_ocr_location
 
@@ -187,28 +186,17 @@ def ocr_tax_form(image, form_type, image_file_path):
 
 
 def ocr_image_segments(aligned, OCR_LOCATIONS):
-
-	processes = []
-	parent_connections = []
 	parsingResults = []
-	for loc in OCR_LOCATIONS:
-		parent_conn, child_conn = Pipe()
-		parent_connections.append(parent_conn)
-
-		process = Process(target=process_ocr_location, args=(loc, aligned, child_conn,)) 
-		processes.append(process)
-
-	for process in processes:
-		process.start()
-
-	# make sure that all processes have finished
-	for process in processes:
-		process.join()
-
-	# get results back from child process
-	for parent_conn in parent_connections:
-		parsingResults.append(parent_conn.recv())
-
+	with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+		future_form_templates_path = {executor.submit(process_ocr_location, loc, aligned): loc for loc in OCR_LOCATIONS}
+		for future in concurrent.futures.as_completed(future_form_templates_path):
+			# url = future_form_templates_path[future]
+			try:
+				parsingResults = parsingResults + future.result()
+			except Exception as exc:
+				print('blew up in parallel processing')
+				print(exc.message)
+	
 	return parsingResults
 
 def save_no_template_match(image):
@@ -222,9 +210,12 @@ def get_best_template(form_templates_path, image):
 
 	# get all templates of the same form and see which one matches best
 	print(form_templates_path)
-	
+	grey_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+	finder = cv2.SIFT_create()
+	kp2, des2 = finder.detectAndCompute(grey_image,None)
+
 	with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
-		future_form_templates_path = {executor.submit(parallel_get_best_template, form_templates_path, filename,image): filename for filename in os.listdir(form_templates_path)}
+		future_form_templates_path = {executor.submit(parallel_get_best_template, form_templates_path, filename, kp2, des2): filename for filename in os.listdir(form_templates_path)}
 		for future in concurrent.futures.as_completed(future_form_templates_path):
 			# url = future_form_templates_path[future]
 			try:
@@ -238,23 +229,16 @@ def get_best_template(form_templates_path, image):
 				print('blew up in parallel processing')
 				print(exc.message)
 			
-	# for filename in os.listdir(form_templates_path):
-	# 	template_path = os.path.join(form_templates_path, filename)
-	# 	print(f'template_path: {template_path}')
-	# 	candidate_template = cv2.imread(template_path)
-	# 	print(f'getting similarity score')
-	# 	score = get_image_similarity_score(candidate_template, image)
-
 
 	print('finished finding best template')
 	return template, template_name, best_similarity_score
 
-def parallel_get_best_template(form_templates_path, filename,image):
+def parallel_get_best_template(form_templates_path, filename, kp2, des2):
 	template_path = os.path.join(form_templates_path, filename)
 	print(f'template_path: {template_path}')
 	candidate_template = cv2.imread(template_path)
 	print(f'getting similarity score')
-	score = get_image_similarity_score(candidate_template, image)
+	score = get_image_similarity_score(candidate_template, kp2, des2)
 	return score, candidate_template, filename
 
 def check_is_float(text):

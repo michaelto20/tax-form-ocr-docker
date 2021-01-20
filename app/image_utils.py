@@ -2,6 +2,7 @@
 import numpy as np
 import imutils
 import cv2
+import time
 
 def align_images(image, template, maxFeatures=500, keepPercent=0.2,
 	debug=False):
@@ -60,7 +61,7 @@ def align_images(image, template, maxFeatures=500, keepPercent=0.2,
 	# return the aligned image
 	return aligned
 
-def get_image_similarity_score(image1, image2):
+def get_image_similarity_score(image1, kp2, des2):
 	"""
     Used to get the similarity score between a template and an image, to find the best
     template to use.
@@ -72,13 +73,13 @@ def get_image_similarity_score(image1, image2):
 	
 	# convert both the input image and template to grayscale
 	img1 = cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
-	img2 = cv2.cvtColor(image2, cv2.COLOR_BGR2GRAY)
 
     # create feature matcher
 	finder = cv2.SIFT_create()
-
+	start = time.time()
 	kp1, des1 = finder.detectAndCompute(img1,None)
-	kp2, des2 = finder.detectAndCompute(img2,None)
+	end = time.time()
+	print(f'finding key points took: {end - start} seconds')
 
 	# finder = cv2.ORB_create()
     # # find the keypoints and descriptors with SIFT
@@ -86,19 +87,45 @@ def get_image_similarity_score(image1, image2):
 	# kp2, des2 = finder.detectAndCompute(img2,None)
 
     # BFMatcher with default params
-	print('create BFMatcher')
-	bf = cv2.BFMatcher()
-	matches = bf.knnMatch(des1,des2, k=2)
+	# print('create Flann Matcher')
+	# FLANN_INDEX_KDTREE = 0
+	# index_params = dict(algorithm = FLANN_INDEX_KDTREE, trees = 3)
+	# search_params = dict(checks=5)   # or pass empty dictionary
+
+	# flann = cv2.FlannBasedMatcher(index_params,search_params)
+	
+	print('create Flann Matcher')
+	start = time.time()
+	matcher = cv2.DescriptorMatcher_create(cv2.DescriptorMatcher_FLANNBASED)
+	matches = matcher.knnMatch(des1, des2, 2)
+	end = time.time()
+	print(f'matching key points took: {end - start} seconds')
+	
+	# matches = flann.knnMatch(des1,des2,k=2)
+	# print('create BF Matcher')
+	# start = time.time()
+	# bf = cv2.BFMatcher()
+	# matches = bf.knnMatch(des1,des2, k=2)
+	# end = time.time()
+	# print(f'matching key points took: {end - start} seconds')
+
 
     # Apply ratio test
 	good = []
 	# good_matches = []
 	
 	print('find good matches')
+	# for i,(m,n) in enumerate(matches):
+	# 	if m.distance < 0.7*n.distance:
+	# 		good.append([m])
+	start = time.time()
 	for m,n in matches:
 		if m.distance < lowe_ratio*n.distance:
 			good.append([m])
-	# 		good_matches.append(m)
+
+	end = time.time()
+	print(f'finding good points took: {end - start} seconds')
+
 
 	# matchedVis = cv2.drawMatches(image1, kp1, image2, kp2,
 	# 	good_matches, None)

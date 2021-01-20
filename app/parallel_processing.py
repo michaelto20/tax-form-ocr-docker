@@ -52,8 +52,7 @@ def process_ocr_location(loc, aligned):
 			# text if the line is *not* empty
 			parsingResults.append((loc, line))
 
-	conn.send(parsingResults)
-	conn.close()
+	return parsingResults
 
 
 def binarize_image(image):
