@@ -8,7 +8,7 @@ import time
 # STEP 1: Load in image to ocr
 # ********************
 # point this to the image you want to ocr
-image = cv2.imread(r'C:\Development\tax-form-ocr-docker\app\scans\form_1099_MISC.png')
+image = cv2.imread(r'C:\Development\tax-form-ocr-docker\app\scans\w2_3.jpeg')
 # image = cv2.imread(r'path/to/image/goes/here')
 
 img_string = base64.b64encode(cv2.imencode('.jpg', image)[1]).decode()
@@ -26,7 +26,7 @@ img_string = base64.b64encode(cv2.imencode('.jpg', image)[1]).decode()
 # }
 json_data = {
     'image': img_string,
-    'form_type': '1099_MISC'
+    'form_type': 'w2'
 }
 json_data = json.dumps(json_data)
 # send http request with image and receive response
@@ -34,7 +34,7 @@ headers = {"content-type": "application/json"}
 api_endpoint = r'https://buewtq9isg.execute-api.us-east-1.amazonaws.com/dev'
 
 start = time.time()
-r = requests.post(url = api_endpoint, data = json_data, headers=headers)
+r = requests.post(url = api_endpoint, data = json_data, headers=headers, timeout=300)
 end = time.time()
 print(r)
 print(r.text)
