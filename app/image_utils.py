@@ -76,10 +76,7 @@ def get_image_similarity_score(image1, kp2, des2):
 
     # create feature matcher
 	finder = cv2.SIFT_create()
-	start = time.time()
 	kp1, des1 = finder.detectAndCompute(img1,None)
-	end = time.time()
-	print(f'finding key points took: {end - start} seconds')
 
 	# finder = cv2.ORB_create()
     # # find the keypoints and descriptors with SIFT
@@ -95,11 +92,8 @@ def get_image_similarity_score(image1, kp2, des2):
 	# flann = cv2.FlannBasedMatcher(index_params,search_params)
 	
 	print('create Flann Matcher')
-	start = time.time()
 	matcher = cv2.DescriptorMatcher_create(cv2.DescriptorMatcher_FLANNBASED)
 	matches = matcher.knnMatch(des1, des2, 2)
-	end = time.time()
-	print(f'matching key points took: {end - start} seconds')
 	
 	# matches = flann.knnMatch(des1,des2,k=2)
 	# print('create BF Matcher')
@@ -118,13 +112,10 @@ def get_image_similarity_score(image1, kp2, des2):
 	# for i,(m,n) in enumerate(matches):
 	# 	if m.distance < 0.7*n.distance:
 	# 		good.append([m])
-	start = time.time()
 	for m,n in matches:
 		if m.distance < lowe_ratio*n.distance:
 			good.append([m])
 
-	end = time.time()
-	print(f'finding good points took: {end - start} seconds')
 
 
 	# matchedVis = cv2.drawMatches(image1, kp1, image2, kp2,
