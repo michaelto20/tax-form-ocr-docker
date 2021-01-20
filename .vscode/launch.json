@@ -22,8 +22,8 @@
             // "args": ["--image", "app/scans/jon_dl_2.jpg", "--form", "dl"]
             // "args": ["--image", "app/scans/jon_dl_barcode.PNG", "--form", "dl"]
             // "args": ["--image", "app/scans/jon_dl_barcode_3.jpg", "--form", "dl"]
-            "args": ["--image", "app/scans/w2_3.jpeg", "--form", "w2"]
-            // "args": ["--image", "app/scans/w2_4.jpeg", "--form", "w2"]
+            // "args": ["--image", "app/scans/w2_3.jpeg", "--form", "w2"]
+            "args": ["--image", "app/scans/w2_4.jpeg", "--form", "w2"]
         }
     ]
 }
