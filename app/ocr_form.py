@@ -23,7 +23,7 @@ W2_TEMPLATES_DIR = 'w2'
 FORM_1099_TEMPLATES_DIR = 'form_1099_MISC'
 NO_TEMPLATE_MATCH_DIR = 'no_template_match'
 template_similarity_threshold = 220
-IS_LOCAL = False
+IS_LOCAL = True
 if IS_LOCAL:
 	NO_TEMPLATE_MATCH_DIR = os.path.join('app', NO_TEMPLATE_MATCH_DIR)
 	TEMPLATES_BASE_DIR = os.path.join('app', TEMPLATES_BASE_DIR)
@@ -65,7 +65,7 @@ def fix_image_dimensions(image):
 def ocr_tax_form(image, form_type, image_file_path):
 	# some times images that are too large or too small mess up later processing
 	print('Checking image dimensions')
-	image = fix_image_dimensions(image)
+	# image = fix_image_dimensions(image)
 
 	# get form ocr configuration
 	print("[INFO] getting OCR configuration...")
@@ -80,7 +80,10 @@ def ocr_tax_form(image, form_type, image_file_path):
 		if IS_LOCAL:
 			path_to_save = os.path.join('app', 'tmp', filename)
 		print(f"about to write file {filename}")
-		cv2.imwrite(path_to_save, image)
+		# 820, 297
+		# 2838, 1061
+		roi = image[297:1061,820: 2838, :]
+		cv2.imwrite(path_to_save, roi)
 		# print(f'file exists after saving to disk: {os.path.exists(filename)}')
 		results = get_drivers_license_info(filename,IS_LOCAL)
 		os.remove(path_to_save)

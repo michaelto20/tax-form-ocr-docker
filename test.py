@@ -8,7 +8,7 @@ import time
 # STEP 1: Load in image to ocr
 # ********************
 # point this to the image you want to ocr
-image = cv2.imread(r'C:\Development\tax-form-ocr-docker\app\scans\scan_drivers_license_ga_rotated_180.jpg')
+image = cv2.imread(r'C:\Development\tax-form-ocr-docker\app\scans\dl_1.jpg')
 # image = cv2.imread(r'path/to/image/goes/here')
 
 img_string = base64.b64encode(cv2.imencode('.jpg', image)[1]).decode()

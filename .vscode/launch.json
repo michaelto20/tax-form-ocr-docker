@@ -11,19 +11,19 @@
             "program": "${file}",
             "console": "integratedTerminal",
             // "args": ["--image", "app/scans/form_1099_MISC.png", "--form", "1099_MISC"]
-            // "args": ["--image", "app/scans/scan_01_resized.jpg", "--form", "w2"]
+            // "args": ["--image", "app/scans/scan_01.jpg", "--form", "w2"]
             // "args": ["--image", "app/scans/scan_01_resized2.jpg", "--form", "w2"]
             // "args": ["--image", "app/scans/scan_drivers_license_ga_rotated_180.jpg", "--form", "dl"]
             // "args": ["--image", "app/scans/scan_drivers_license_ga_resized.jpg", "--form", "dl"]
             // "args": ["--image", "app/scans/alli_dl.jpg", "--form", "dl"]
-            // "args": ["--image", "app/scans/jon_dl.jpg", "--form", "dl"]
+            "args": ["--image", "app/scans/jon_dl.jpg", "--form", "dl"]
             // "args": ["--image", "app/scans/jon_dl_3.jpg", "--form", "dl"]
             // "args": ["--image", "app/scans/jon_dl_rotated.jpg", "--form", "dl"]
             // "args": ["--image", "app/scans/jon_dl_2.jpg", "--form", "dl"]
             // "args": ["--image", "app/scans/jon_dl_barcode.PNG", "--form", "dl"]
             // "args": ["--image", "app/scans/jon_dl_barcode_3.jpg", "--form", "dl"]
             // "args": ["--image", "app/scans/w2_3.jpeg", "--form", "w2"]
-            "args": ["--image", "app/scans/w2_4.jpeg", "--form", "w2"]
+            // "args": ["--image", "app/scans/w2_4.jpeg", "--form", "w2"]
         }
     ]
 }
