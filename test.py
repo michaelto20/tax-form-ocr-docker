@@ -8,10 +8,11 @@ import time
 # STEP 1: Load in image to ocr
 # ********************
 # point this to the image you want to ocr
-image = cv2.imread(r'C:\Development\tax-form-ocr-docker\app\scans\dl_1.jpg')
+image = cv2.imread(r'C:\Development\CS-6515-Algorithms\from_python.png')
+# image = cv2.imread(r'C:\Development\tax-form-ocr-docker\sharpen_barcode.png')
 # image = cv2.imread(r'path/to/image/goes/here')
 
-img_string = base64.b64encode(cv2.imencode('.jpg', image)[1]).decode()
+img_string = base64.b64encode(cv2.imencode('.png', image)[1]).decode("utf-8")
 
 # ********************************************************
 # STEP 2: Replace <form type here> with the form type found below:
@@ -25,13 +26,17 @@ img_string = base64.b64encode(cv2.imencode('.jpg', image)[1]).decode()
 #     'form_type': 'w2'
 # }
 json_data = {
-    'image': img_string,
+    'image': img_string[0:150],
     'form_type': 'dl'
 }
+# file1 = open("test.txt","w") 
+# file1.write(img_string)
+# file1.close() 
 json_data = json.dumps(json_data)
 # send http request with image and receive response
 headers = {"content-type": "application/json"}
-api_endpoint = r'https://buewtq9isg.execute-api.us-east-1.amazonaws.com/dev'
+api_endpoint = r'https://enjgy1g81n67.x.pipedream.net'
+# api_endpoint = r'https://buewtq9isg.execute-api.us-east-1.amazonaws.com/dev'
 
 start = time.time()
 r = requests.post(url = api_endpoint, data = json_data, headers=headers)

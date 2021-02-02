@@ -8,7 +8,8 @@ import json
 import os
 import time
 import numpy as np
-from drivers_license_scanner  import get_drivers_license_info
+from drivers_license_scanner  import decode_drivers_license_info
+from find_license import get_drivers_license_info
 # from pyzbar.pyzbar import decode, ZBarSymbol
 import concurrent.futures
 from parallel_processing import process_ocr_location
@@ -20,6 +21,7 @@ TRANSLATION_TABLE = dict.fromkeys(map(ord, SYMBOLS_TO_STRIP), None)
 CONFIG_DIR = 'template_configurations'
 TEMPLATES_BASE_DIR = 'templates'
 W2_TEMPLATES_DIR = 'w2'
+DL_TEAMPLATES_DIR = 'dl'
 FORM_1099_TEMPLATES_DIR = 'form_1099_MISC'
 NO_TEMPLATE_MATCH_DIR = 'no_template_match'
 template_similarity_threshold = 220
@@ -75,18 +77,22 @@ def ocr_tax_form(image, form_type, image_file_path):
 		form_templates_path = os.path.join(TEMPLATES_BASE_DIR, W2_TEMPLATES_DIR)
 	elif form_type == "dl":
 		# write to local file for barcode reader
-		filename = f'{time.time()}temp.png'
-		path_to_save = '../tmp/' + filename
-		if IS_LOCAL:
-			path_to_save = os.path.join('app', 'tmp', filename)
-		print(f"about to write file {filename}")
-		# 820, 297
-		# 2838, 1061
-		roi = image[297:1061,820: 2838, :]
-		cv2.imwrite(path_to_save, roi)
-		# print(f'file exists after saving to disk: {os.path.exists(filename)}')
-		results = get_drivers_license_info(filename,IS_LOCAL)
-		os.remove(path_to_save)
+		# filename = f'{time.time()}temp.png'
+		# path_to_save = '../tmp/' + filename
+		# if IS_LOCAL:
+		# 	path_to_save = os.path.join('app', 'tmp', filename)
+		# print(f"about to write file {filename}")
+		# # 820, 297
+		# # 2838, 1061
+		# roi = image[297:1061,820: 2838, :]
+		# cv2.imwrite(path_to_save, roi)
+		# # print(f'file exists after saving to disk: {os.path.exists(filename)}')
+		dl_template_path = os.path.join(TEMPLATES_BASE_DIR, DL_TEAMPLATES_DIR, 'dl_template.png')
+		# dl_template_path = r'C:\Development\tax-form-ocr-docker\app\templates\dl\dl_template.png'
+		dl_template_image = cv2.imread(dl_template_path)
+		dl_info = get_drivers_license_info(image,dl_template_image)
+		results =  decode_drivers_license_info(dl_info)
+		# os.remove(path_to_save)
 		return "success", None, results
 	elif form_type == "1099_MISC":
 		form_templates_path = os.path.join(TEMPLATES_BASE_DIR, FORM_1099_TEMPLATES_DIR)
