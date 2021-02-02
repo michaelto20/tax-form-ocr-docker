@@ -9,7 +9,7 @@ import os
 import time
 import numpy as np
 from drivers_license_scanner  import decode_drivers_license_info
-from find_license import get_drivers_license_info
+from find_license import get_drivers_license_info, read_barcode_trial
 # from pyzbar.pyzbar import decode, ZBarSymbol
 import concurrent.futures
 from parallel_processing import process_ocr_location
@@ -25,7 +25,7 @@ DL_TEAMPLATES_DIR = 'dl'
 FORM_1099_TEMPLATES_DIR = 'form_1099_MISC'
 NO_TEMPLATE_MATCH_DIR = 'no_template_match'
 template_similarity_threshold = 220
-IS_LOCAL = True
+IS_LOCAL = False
 if IS_LOCAL:
 	NO_TEMPLATE_MATCH_DIR = os.path.join('app', NO_TEMPLATE_MATCH_DIR)
 	TEMPLATES_BASE_DIR = os.path.join('app', TEMPLATES_BASE_DIR)
@@ -91,6 +91,8 @@ def ocr_tax_form(image, form_type, image_file_path):
 		# dl_template_path = r'C:\Development\tax-form-ocr-docker\app\templates\dl\dl_template.png'
 		dl_template_image = cv2.imread(dl_template_path)
 		dl_info = get_drivers_license_info(image,dl_template_image)
+		if dl_info == None:
+			dl_info = read_barcode_trial(image)
 		results =  decode_drivers_license_info(dl_info)
 		# os.remove(path_to_save)
 		return "success", None, results

@@ -89,11 +89,11 @@ def decode_drivers_license_info(dlstring):
         dlstringarray = [line.strip() for line in dlstringarray]
 
         # remove 'ANSI' from first element (It's a fixed header)
-        dlstringarray[0] = dlstringarray[0][5:]
+        # dlstringarray[0] = dlstringarray[0][5:]
 
-        metadata = dlstringarray[0]
+        # metadata = dlstringarray[0]
 
-        dlstringarray.remove(metadata)
+        # dlstringarray.remove(metadata)
 
         for field in dlstringarray:
 
