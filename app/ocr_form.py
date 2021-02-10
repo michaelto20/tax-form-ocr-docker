@@ -1,4 +1,4 @@
-from image_utils import align_images, get_image_similarity_score
+from image_utils import align_images_sift, get_image_similarity_score, align_image
 from collections import namedtuple
 import pytesseract
 import argparse
@@ -24,8 +24,8 @@ W2_TEMPLATES_DIR = 'w2'
 DL_TEAMPLATES_DIR = 'dl'
 FORM_1099_TEMPLATES_DIR = 'form_1099_MISC'
 NO_TEMPLATE_MATCH_DIR = 'no_template_match'
-template_similarity_threshold = 220
-IS_LOCAL = False
+template_similarity_threshold = 20
+IS_LOCAL = True
 if IS_LOCAL:
 	NO_TEMPLATE_MATCH_DIR = os.path.join('app', NO_TEMPLATE_MATCH_DIR)
 	TEMPLATES_BASE_DIR = os.path.join('app', TEMPLATES_BASE_DIR)
@@ -43,6 +43,8 @@ def cleanup_text(text):
 	# strip out non-ASCII text so we can draw the text on the image
 	# using OpenCV
 	# return "".join([c if ord(c) < 128 else "" for c in text]).strip()
+	# remove spaces
+	text = text.replace(' ', '')
 	return text.translate(TRANSLATION_TABLE)
 
 def fix_image_dimensions(image):
@@ -63,11 +65,23 @@ def fix_image_dimensions(image):
 	
 	return image
 
+def clean_image(image):
+	# normalize brightness and increase contrast
+	gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+	gray_image = cv2.equalizeHist(gray_image)
+	cv2.imwrite('gray_image_equalized.png', gray_image)
+	bgr_image = cv2.cvtColor(gray_image, cv2.COLOR_GRAY2BGR)
+	cv2.imwrite('image_equalized.png', bgr_image)
+	return bgr_image
+
 
 def ocr_tax_form(image, form_type, image_file_path):
 	# some times images that are too large or too small mess up later processing
-	print('Checking image dimensions')
-	# image = fix_image_dimensions(image)
+	# print('Checking image dimensions')
+	image = fix_image_dimensions(image)
+
+	print('[INFO] Cleaning up image')
+	# image = clean_image(image)
 
 	# get form ocr configuration
 	print("[INFO] getting OCR configuration...")
@@ -104,12 +118,16 @@ def ocr_tax_form(image, form_type, image_file_path):
 	# cv2.imwrite('temp_image.png', image)
 	# time.sleep(3)
 	# get best form template
-	template, template_name, best_similarity_score = get_best_template(form_templates_path, image)
+	start = time.time()
+	template, template_name, best_similarity_score, kp2, kp1, good = get_best_template(form_templates_path, image)
+	end = time.time()
+	print(f'getting best template took: {end - start}')
+
 	print(f'best template name: {template_name}')
 	# check to make sure we found a suitable template, if not save this image so we can make it into a template
 	if best_similarity_score <= template_similarity_threshold:
 		save_no_template_match(image)
-		return "Cannot read the image at this time, please try again later", None
+		return "Cannot read the image at this time, please try again later", None, None
 
 	# get matching config for template
 	print('Getting template configs')
@@ -121,11 +139,18 @@ def ocr_tax_form(image, form_type, image_file_path):
 
 	# align the images
 	print("[INFO] aligning images...")
-	aligned = align_images(image, template, debug=False)
+	start = time.time()
+	# aligned = align_images_sift(image, template, debug=False)
+	aligned = align_image(good, kp2, kp1, template, image)
+	end = time.time()
+	print(f'aligning images took: {end - start}')
 
 	# initialize a results list to store the document OCR parsing results
 	print("[INFO] OCR'ing document...")
+	start = time.time()
 	parsingResults = ocr_image_segments(aligned, OCR_LOCATIONS)
+	end = time.time()
+	print(f'ocring took: {end - start}')
 
 	# initialize a dictionary to store our final OCR results
 	results = {}
@@ -171,13 +196,13 @@ def ocr_tax_form(image, form_type, image_file_path):
 
 		# loop over all lines in the text
 		# display the OCR result to our terminal
-		print(loc["id"])
-		print("=" * len(loc["id"]))
+		# print(loc["id"])
+		# print("=" * len(loc["id"]))
 		for (i, line) in enumerate(text.split("\n")):
 			line = cleanup_text(line).strip()
 			if len(line) != 0:
 				if (loc["is_numeric"] == True and check_is_float(line)) or loc["is_numeric"] == False:
-					print("{}".format(line))
+					# print("{}".format(line))
 					if loc["id"] not in form_info:
 						form_info[loc["id"]] = line
 					else:
@@ -198,6 +223,8 @@ def ocr_tax_form(image, form_type, image_file_path):
 
 def ocr_image_segments(aligned, OCR_LOCATIONS):
 	parsingResults = []
+	# for loc in OCR_LOCATIONS:
+		# parsingResults += process_ocr_location(loc, aligned)
 	with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
 		future_form_templates_path = {executor.submit(process_ocr_location, loc, aligned): loc for loc in OCR_LOCATIONS}
 		for future in concurrent.futures.as_completed(future_form_templates_path):
@@ -218,6 +245,9 @@ def get_best_template(form_templates_path, image):
 	template = None
 	best_similarity_score = 0
 	template_name = None
+	good = None
+	kp1 = None
+	# align_image(good, kp1, kp2, template, image):
 
 	# get all templates of the same form and see which one matches best
 	print(form_templates_path)
@@ -231,26 +261,30 @@ def get_best_template(form_templates_path, image):
 			# url = future_form_templates_path[future]
 			try:
 				temp = future.result()
-				score, candidate_template, filename = temp
+				score, candidate_template, filename, kp1_candidate, good_candidate = temp
 				if score > best_similarity_score:
 					template = candidate_template
 					best_similarity_score = score
 					template_name = filename
+					kp1 = kp1_candidate
+					good = good_candidate
+
 			except Exception as exc:
 				print('blew up in parallel processing')
 				print(exc.message)
 			
 
 	print('finished finding best template')
-	return template, template_name, best_similarity_score
+	return template, template_name, best_similarity_score, kp1, kp2, good
 
 def parallel_get_best_template(form_templates_path, filename, kp2, des2):
 	template_path = os.path.join(form_templates_path, filename)
-	print(f'template_path: {template_path}')
+	# print(f'template_path: {template_path}')
 	candidate_template = cv2.imread(template_path)
-	print(f'getting similarity score')
-	score = get_image_similarity_score(candidate_template, kp2, des2)
-	return score, candidate_template, filename
+	# print(f'getting similarity score')
+	score, kp1, good = get_image_similarity_score(candidate_template, kp2, des2)
+	print(f'template: {filename} has {score}')
+	return score, candidate_template, filename, kp1, good
 
 def check_is_float(text):
 	try:

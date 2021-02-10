@@ -1,51 +1,51 @@
 {
     "ssn" : {
-        "coord": [827, 444, 1343, 527],
-        "keywords":["employee", "social","security", "number", "employee's", "a"],
+        "coord": [696, 227, 1211, 308],
+        "keywords":["employee", "social","security", "number", "employee's"],
         "is_numeric": true
     },
     "ein" : {
-        "coord": [366, 544, 1536, 624],
+        "coord": [235, 326, 1414, 402],
         "keywords":["employer", "identification", "number", "(EIN)"],
         "is_numeric": true
     },
     "12a" : {
-        "coord": [2267, 1065, 2612, 1116],
+        "coord": [2127, 851, 2491, 896],
         "keywords":["force_parse"],
         "is_numeric": true
     },
     "employee_info" : {
-        "coord": [361, 1041, 1552, 1418],
-        "keywords":["e", "employee", "employee's","first", "initial", "last", "name", "address", "and"],
+        "coord": [228, 862, 1419, 1204],
+        "keywords":["employee", "employee's","first", "initial", "last", "name", "address", "and"],
         "is_numeric": false
     },
     "state" : {
-        "coord": [355, 1525, 468, 1576],
+        "coord": [227, 1307, 335, 1354],
         "keywords":["force_parse"],
         "is_numeric": false
     },
     "employer_state_id" : {
-        "coord": [485, 1525, 895, 1576],
+        "coord": [355, 1306, 764, 1353],
         "keywords":["force_parse"],
         "is_numeric": false
     },
     "state_wages" : {
-        "coord": [911, 1489, 1251, 1578],
+        "coord": [783, 1310, 1115, 1356],
         "keywords":["state", "wages", "tips", "etc"],
         "is_numeric": true
     },
     "state_income_tax" : {
-        "coord": [1262, 1489, 1551, 1578],
+        "coord": [1134, 1311, 1417, 1356],
         "keywords":["state", "income", "tax"],
         "is_numeric": true
     },
     "wages" : {
-        "coord": [1568, 539, 2078, 621],
+        "coord": [1432, 358, 1942, 402],
         "keywords":["wages", "tips", "other", "compensation"],
         "is_numeric": true
     },
     "federal_income_withheld" : {
-        "coord": [2095, 538, 2620, 617],
+        "coord": [1965, 357, 2486, 398],
         "keywords":["federal", "income", "tax", "withheld"],
         "is_numeric": true
     }

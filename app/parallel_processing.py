@@ -16,7 +16,7 @@ def process_ocr_location(loc, aligned):
 	roi = aligned[y:y + h, x:x + w]
 	
 	# OCR the ROI using Tesseract
-	print('Binarize Image')
+	# print('Binarize Image')
 	binarized_roi = binarize_image(roi)
 
 	gray_roi = cv2.cvtColor(binarized_roi, cv2.COLOR_BGR2RGB)

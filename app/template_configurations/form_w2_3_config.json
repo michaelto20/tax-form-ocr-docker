@@ -1,12 +1,12 @@
 {
     "ssn" : {
         "coord": [1279, 2261, 1675, 2313],
-        "keywords":["employee", "ssa", "number", "employee's", "b"],
+        "keywords":["employee", "ssa", "number", "employee's"],
         "is_numeric": false
     },
     "ein" : {
         "coord": [874, 2261, 1270, 2315],
-        "keywords":["employer", "FED", "ID", "number", "employer's", "a"],
+        "keywords":["employer", "FED", "ID", "number", "employer's"],
         "is_numeric": false
     },
     "12a" : {
@@ -26,7 +26,7 @@
     },
     "employee_info" : {
         "coord": [874, 2701, 1672, 2909],
-        "keywords":["e/f", "employee", "employee's", "name", "address", "and", "zip", "code"],
+        "keywords":["employee", "employee's", "name", "address", "and", "zip", "code"],
         "is_numeric": false
     },
     "state" : {

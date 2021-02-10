@@ -4,7 +4,7 @@ import imutils
 import cv2
 import time
 
-def align_images_sift(image, template, maxFeatures=500, keepPercent=0.2,
+def align_images_sift(image, template, maxFeatures=2000, keepPercent=0.2,
 	debug=False):
 	# convert both the input image and template to grayscale
 	imageGray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -34,6 +34,17 @@ def align_images_sift(image, template, maxFeatures=500, keepPercent=0.2,
 	for m,n in matches:
 		if m.distance < 0.7*n.distance:
 			good.append(m)
+	
+	# keep = int(len(good) * keepPercent)
+	# good = good[:keep]
+
+	if debug:
+		matchedVis = cv2.drawMatches(image, kp1, template, kp2,
+			good, None)
+		matchedVis = imutils.resize(matchedVis, width=1000)
+		cv2.imshow("Matched Keypoints", matchedVis)
+		cv2.waitKey(0)
+
 	MIN_MATCH_COUNT = 8
 	if len(good) >= MIN_MATCH_COUNT:
 		src_pts = np.float32([ kp1[m.queryIdx].pt for m in good ]).reshape(-1,1,2)
@@ -48,8 +59,23 @@ def align_images_sift(image, template, maxFeatures=500, keepPercent=0.2,
 		print("Couldn't find enough good points to align images")
 		return None
 
+def align_image(good, kp1, kp2, template, image):
+	MIN_MATCH_COUNT = 8
+	if len(good) >= MIN_MATCH_COUNT:
+		src_pts = np.float32([ kp1[m.queryIdx].pt for m in good ]).reshape(-1,1,2)
+		dst_pts = np.float32([ kp2[m.trainIdx].pt for m in good ]).reshape(-1,1,2)
+		(H, mask) = cv2.findHomography(dst_pts, src_pts, method=cv2.RANSAC)
 
-def align_images(image, template, maxFeatures=500, keepPercent=0.2,
+		# use the homography matrix to align the images
+		(h, w) = template.shape[:2]
+		aligned = cv2.warpPerspective(image, H, (w, h))
+		return aligned
+	else:
+		print("Couldn't find enough good points to align images")
+		return None
+
+
+def align_images(image, template, maxFeatures=1000, keepPercent=0.2,
 	debug=False):
 	# convert both the input image and template to grayscale
 	imageGray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -136,7 +162,7 @@ def get_image_similarity_score(image1, kp2, des2):
 
 	# flann = cv2.FlannBasedMatcher(index_params,search_params)
 	
-	print('create Flann Matcher')
+	# print('create Flann Matcher')
 	matcher = cv2.DescriptorMatcher_create(cv2.DescriptorMatcher_FLANNBASED)
 	matches = matcher.knnMatch(des1, des2, 2)
 	
@@ -153,13 +179,13 @@ def get_image_similarity_score(image1, kp2, des2):
 	good = []
 	# good_matches = []
 	
-	print('find good matches')
+	# print('find good matches')
 	# for i,(m,n) in enumerate(matches):
 	# 	if m.distance < 0.7*n.distance:
 	# 		good.append([m])
 	for m,n in matches:
 		if m.distance < lowe_ratio*n.distance:
-			good.append([m])
+			good.append(m)
 
 
 
@@ -168,5 +194,5 @@ def get_image_similarity_score(image1, kp2, des2):
 	# matchedVis = imutils.resize(matchedVis, width=1000)
 	# cv2.imshow("Template Matching", matchedVis)
 	# cv2.waitKey(0)
-	print(f'number of good matches: {len(good)}')
-	return len(good)
+	# print(f'number of good matches: {len(good)}')
+	return len(good), kp1, good
