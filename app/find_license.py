@@ -252,7 +252,8 @@ def make_border(image, borderSize = 10):
     )
 
 def read_barcode_trial(image):
-    license_key = r't0075xQAAAG+XpIFjxXKQgn4xHHWc/+Vs9zcEPM7W4w23WhCb1Bm7GPJgfrzu5JS2fK5Cewyfk99oXx4FjEtKQygdzzQdu1kjLVgSQSmF'
+    license_key = r't0077xQAAABxGlE9eVmY71brSd/XF6Qc6jvyldl5rvKoH2kRFH/+68blr8ru+c2sb13jEAtxXhQLAe1crqXk6pIuzAOJ4+2JqfoSnP1/NKmQ='
+    # license_key = r't0075xQAAAG+XpIFjxXKQgn4xHHWc/+Vs9zcEPM7W4w23WhCb1Bm7GPJgfrzu5JS2fK5Cewyfk99oXx4FjEtKQygdzzQdu1kjLVgSQSmF'
     # license_key = r't0078xQAAALbXgVMIttujaGmBDcm+kZXaxuQNk9asytcZy926MLF3z6gSvwoji/3M5HQ+vJMmZIgUu/zS4HhtQR5r1X2iwEWonvfQ8QADsyla'
     # json_file = r"Please input your own template path"
     # image_path = r"C:\Development\tax-form-ocr-docker\app\scans\jon_dl.jpg"

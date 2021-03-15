@@ -16,7 +16,7 @@ from parallel_processing import process_ocr_location
 
 
 config = r'-l eng --oem 1 --psm 6'
-SYMBOLS_TO_STRIP = r'!@#$,%^&*()-_+=`~|{}\/?—'
+SYMBOLS_TO_STRIP = r'!@#$,%^&*()-_+=`~|{}\/?—°'
 TRANSLATION_TABLE = dict.fromkeys(map(ord, SYMBOLS_TO_STRIP), None)
 CONFIG_DIR = 'template_configurations'
 TEMPLATES_BASE_DIR = 'templates'
@@ -25,7 +25,7 @@ DL_TEAMPLATES_DIR = 'dl'
 FORM_1099_TEMPLATES_DIR = 'form_1099_MISC'
 NO_TEMPLATE_MATCH_DIR = 'no_template_match'
 template_similarity_threshold = 20
-IS_LOCAL = True
+IS_LOCAL = False
 if IS_LOCAL:
 	NO_TEMPLATE_MATCH_DIR = os.path.join('app', NO_TEMPLATE_MATCH_DIR)
 	TEMPLATES_BASE_DIR = os.path.join('app', TEMPLATES_BASE_DIR)
@@ -42,10 +42,17 @@ OCRLocation = namedtuple("OCRLocation", ["id", "bbox",
 def cleanup_text(text):
 	# strip out non-ASCII text so we can draw the text on the image
 	# using OpenCV
-	# return "".join([c if ord(c) < 128 else "" for c in text]).strip()
+	return "".join([c if ord(c) < 128 else "" for c in text]).strip()
 	# remove spaces
-	text = text.replace(' ', '')
-	return text.translate(TRANSLATION_TABLE)
+	# return text.translate(TRANSLATION_TABLE)
+
+def cleanup_text_line(text):
+	# strip out non-ASCII text so we can draw the text on the image
+	# using OpenCV
+	text =  "".join([c if ord(c) < 128 else "" for c in text]).strip()
+	# remove spaces
+	return text.replace(' ', '')
+	# return text.translate(TRANSLATION_TABLE)
 
 def fix_image_dimensions(image):
 	# resize image if too far from optimal size
@@ -140,7 +147,7 @@ def ocr_tax_form(image, form_type, image_file_path):
 	# align the images
 	print("[INFO] aligning images...")
 	start = time.time()
-	# aligned = align_images_sift(image, template, debug=False)
+	# aligned = align_images_sift(image, template, debug=IS_LOCAL)
 	aligned = align_image(good, kp2, kp1, template, image)
 	end = time.time()
 	print(f'aligning images took: {end - start}')
@@ -192,25 +199,27 @@ def ocr_tax_form(image, form_type, image_file_path):
 		clean = cleanup_text(text)
 
 		# draw a bounding box around the text
-		cv2.rectangle(aligned, (x, y), (x + w, y + h), (0, 255, 0), 2)
+		if IS_LOCAL:
+			cv2.rectangle(aligned, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
 		# loop over all lines in the text
 		# display the OCR result to our terminal
-		# print(loc["id"])
-		# print("=" * len(loc["id"]))
+		print(loc["id"])
+		print("=" * len(loc["id"]))
 		for (i, line) in enumerate(text.split("\n")):
-			line = cleanup_text(line).strip()
+			line = cleanup_text_line(line).strip()
 			if len(line) != 0:
 				if (loc["is_numeric"] == True and check_is_float(line)) or loc["is_numeric"] == False:
-					# print("{}".format(line))
+					print("{}".format(line))
 					if loc["id"] not in form_info:
 						form_info[loc["id"]] = line
 					else:
 						form_info[loc["id"]] += line
 					# draw the line on the output image
-					startY = y + (i * 70) + 40
-					cv2.putText(aligned, line, (x, startY),
-						cv2.FONT_HERSHEY_SIMPLEX, 1.8, (0, 0, 255), 5)
+					if IS_LOCAL:
+						startY = y + (i * 70) + 40
+						cv2.putText(aligned, line, (x, startY),
+							cv2.FONT_HERSHEY_SIMPLEX, 1.8, (0, 0, 255), 5)
 
 	# show the input and output images, resizing it such that they fit
 	# on our screen
@@ -224,7 +233,7 @@ def ocr_tax_form(image, form_type, image_file_path):
 def ocr_image_segments(aligned, OCR_LOCATIONS):
 	parsingResults = []
 	# for loc in OCR_LOCATIONS:
-		# parsingResults += process_ocr_location(loc, aligned)
+	# 	parsingResults += process_ocr_location(loc, aligned)
 	with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
 		future_form_templates_path = {executor.submit(process_ocr_location, loc, aligned): loc for loc in OCR_LOCATIONS}
 		for future in concurrent.futures.as_completed(future_form_templates_path):
