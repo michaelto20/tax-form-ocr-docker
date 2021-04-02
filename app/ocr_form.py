@@ -25,7 +25,7 @@ DL_TEAMPLATES_DIR = 'dl'
 FORM_1099_TEMPLATES_DIR = 'form_1099_MISC'
 NO_TEMPLATE_MATCH_DIR = 'no_template_match'
 template_similarity_threshold = 20
-IS_LOCAL = False
+IS_LOCAL = True
 if IS_LOCAL:
 	NO_TEMPLATE_MATCH_DIR = os.path.join('app', NO_TEMPLATE_MATCH_DIR)
 	TEMPLATES_BASE_DIR = os.path.join('app', TEMPLATES_BASE_DIR)
@@ -114,7 +114,10 @@ def ocr_tax_form(image, form_type, image_file_path):
 		dl_info = get_drivers_license_info(image,dl_template_image)
 		if dl_info == None:
 			dl_info = read_barcode_trial(image)
-		results =  decode_drivers_license_info(dl_info)
+		if dl_info != None:
+			results =  decode_drivers_license_info(dl_info)
+		else:
+			results = 'No Results, please make sure the image is of the back of the driver\'s license'
 		# os.remove(path_to_save)
 		return "success", None, results
 	elif form_type == "1099_MISC":
@@ -204,13 +207,13 @@ def ocr_tax_form(image, form_type, image_file_path):
 
 		# loop over all lines in the text
 		# display the OCR result to our terminal
-		print(loc["id"])
-		print("=" * len(loc["id"]))
+		# print(loc["id"])
+		# print("=" * len(loc["id"]))
 		for (i, line) in enumerate(text.split("\n")):
 			line = cleanup_text_line(line).strip()
 			if len(line) != 0:
 				if (loc["is_numeric"] == True and check_is_float(line)) or loc["is_numeric"] == False:
-					print("{}".format(line))
+					# print("{}".format(line))
 					if loc["id"] not in form_info:
 						form_info[loc["id"]] = line
 					else:
@@ -242,7 +245,6 @@ def ocr_image_segments(aligned, OCR_LOCATIONS):
 				parsingResults = parsingResults + future.result()
 			except Exception as exc:
 				print('blew up in parallel processing')
-				print(exc.message)
 	
 	return parsingResults
 

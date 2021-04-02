@@ -74,9 +74,10 @@ def remove_lines(roi):
 	# detect lines
 	lines = get_lines(edges)
 
-	# white out major lines
-	for x1,y1,x2,y2 in lines[0]:
-		cv2.line(roi,(x1,y1),(x2,y2),(255,255,255),6)
+	if type(lines) == list and len(lines) > 0:
+		# white out major lines
+		for x1,y1,x2,y2 in lines[0]:
+			cv2.line(roi,(x1,y1),(x2,y2),(255,255,255),6)
 
 	# # use make on roi to remove lines
 	# masked_roi_and = cv2.bitwise_and(roi, roi, mask=mask)
