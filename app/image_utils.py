@@ -139,7 +139,6 @@ def get_image_similarity_score(image1, kp2, des2):
 
 	The similarity score is based on the number of good matchs based on the Lowe Ratio
 	"""
-	print('Inside get_image_similarity_score function')
 	lowe_ratio = 0.70
 	
 	# convert both the input image and template to grayscale

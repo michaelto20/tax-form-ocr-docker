@@ -9,11 +9,6 @@
         "keywords":["employer", "identification", "number", "(EIN)"],
         "is_numeric": false
     },
-    "12a" : {
-        "coord": [2689, 1055, 3157, 1225],
-        "keywords":["force_parse"],
-        "is_numeric": true
-    },
     "employee_info" : {
         "coord": [163, 1163, 1765, 1553],
         "keywords":["employee", "employee's","first", "initial", "last", "name", "address", "and", "zip", "code"],

@@ -1,3 +1,9 @@
+To locally run a the docker image and open a bash sell
+change DOCKERFILE so there is no entrypoint and the CMD is: CMD [ "/bin/bash" ]
+build the image with name "tax-form-ocr-docker"
+then run: docker run -it tax-form-ocr-docker
+
+
 run bash in container from command line
 docker exec -t -i mycontainer /bin/bash
 docker run -it --entrypoint /bin/bash a2330cc62cfe

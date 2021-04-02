@@ -42,17 +42,17 @@ OCRLocation = namedtuple("OCRLocation", ["id", "bbox",
 def cleanup_text(text):
 	# strip out non-ASCII text so we can draw the text on the image
 	# using OpenCV
-	return "".join([c if ord(c) < 128 else "" for c in text]).strip()
+	clean = "".join([c if ord(c) < 128 else "" for c in text]).strip()
 	# remove spaces
-	# return text.translate(TRANSLATION_TABLE)
+	return text.translate(clean)
 
 def cleanup_text_line(text):
 	# strip out non-ASCII text so we can draw the text on the image
 	# using OpenCV
 	text =  "".join([c if ord(c) < 128 else "" for c in text]).strip()
 	# remove spaces
-	return text.replace(' ', '')
-	# return text.translate(TRANSLATION_TABLE)
+	# text = text.replace(' ', '')
+	return text.translate(TRANSLATION_TABLE)
 
 def fix_image_dimensions(image):
 	# resize image if too far from optimal size
@@ -244,7 +244,7 @@ def ocr_image_segments(aligned, OCR_LOCATIONS):
 			try:
 				parsingResults = parsingResults + future.result()
 			except Exception as exc:
-				print('blew up in parallel processing')
+				print('blew up in parallel processing ocring data')
 	
 	return parsingResults
 
@@ -265,6 +265,8 @@ def get_best_template(form_templates_path, image):
 	grey_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 	finder = cv2.SIFT_create()
 	kp2, des2 = finder.detectAndCompute(grey_image,None)
+	# for filename in os.listdir(form_templates_path):
+	# 	score, candidate_template, filename, kp1_candidate, good_candidate = parallel_get_best_template(form_templates_path, filename, kp2, des2)
 
 	with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
 		future_form_templates_path = {executor.submit(parallel_get_best_template, form_templates_path, filename, kp2, des2): filename for filename in os.listdir(form_templates_path)}
@@ -281,8 +283,8 @@ def get_best_template(form_templates_path, image):
 					good = good_candidate
 
 			except Exception as exc:
-				print('blew up in parallel processing')
-				print(exc.message)
+				print('blew up in parallel processing getting template')
+				# print(exc.message)
 			
 
 	print('finished finding best template')

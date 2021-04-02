@@ -54,7 +54,7 @@ WORKDIR ${FUNCTION_DIR}
 # Copy requirements.txt into docker image
 COPY ./requirements.txt ./ 
 RUN pip3 install --upgrade pip
-RUN pip3 install pillow
+# RUN pip3 install pillow
 RUN pip3 install tesseract-ocr
 RUN pip3 install pytesseract
 RUN pip3 install opencv-contrib-python
@@ -68,6 +68,5 @@ RUN pip3 install -r requirements.txt
 RUN pip3 install awslambdaric
 
 ENTRYPOINT [ "/usr/bin/python3", "-m", "awslambdaric" ]
-# ENTRYPOINT [ "/bin/bash" ]
-# ENTRYPOINT [ "python3"]
+# CMD [ "/bin/bash" ]
 CMD [ "app.handler" ]
