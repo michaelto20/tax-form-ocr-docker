@@ -14,9 +14,10 @@
             // "args": ["--image", "app/scans/alli_dl.jpg", "--form", "dl"]
             // "args": ["--image", "app/scans/IMG_1268.jpg", "--form", "dl"]
             // "args": ["--image", "app/scans/scan_01.jpg", "--form", "w2"]
-            // "args": ["--image", "C:/Development/tax-form-ocr-docker/scans/IMG_1299.jpg", "--form", "w2"]
-            "args": ["--image", "app/scans/w2-camera-1-onepart.jpg", "--form", "w2"]
-            // "args": ["--image", "app/scans/scan_01_rotated_180.jpg", "--form", "w2"]
+            // "args": ["--image", "app/scans/IMG_1292.jpg", "--form", "w2"]
+            // "args": ["--image", "app/scans/w2-camera-1-onepart.jpg", "--form", "w2"]
+            "args": ["--image", "app/scans/scan_01_rotated_180.jpg", "--form", "w2"]
+            // "args": ["--image", "app/scans/W2-TSBooks.png", "--form", "w2"]
         }
     ]
 }

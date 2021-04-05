@@ -44,7 +44,10 @@ def cleanup_text(text):
 	# using OpenCV
 	clean = "".join([c if ord(c) < 128 else "" for c in text]).strip()
 	# remove spaces
-	return text.translate(clean)
+	for ch in ['!','@','#','$',',','%','^','&','*','(',')','-','_','+','=','`','~','|','{','}','\\','/','?','—','°']:
+		clean = clean.replace(ch,"\\"+ch)
+	return clean
+	# return text.translate(clean)
 
 def cleanup_text_line(text):
 	# strip out non-ASCII text so we can draw the text on the image
@@ -200,6 +203,9 @@ def ocr_tax_form(image, form_type, image_file_path):
 		w = x2 - x
 		h = y2 - y
 		clean = cleanup_text(text)
+		if(loc['is_numeric']):
+			# remove spaces if the value should be a number
+			clean = clean.replace(' ', '')
 
 		# draw a bounding box around the text
 		if IS_LOCAL:
@@ -209,7 +215,7 @@ def ocr_tax_form(image, form_type, image_file_path):
 		# display the OCR result to our terminal
 		# print(loc["id"])
 		# print("=" * len(loc["id"]))
-		for (i, line) in enumerate(text.split("\n")):
+		for (i, line) in enumerate(clean.split("\n")):
 			line = cleanup_text_line(line).strip()
 			if len(line) != 0:
 				if (loc["is_numeric"] == True and check_is_float(line)) or loc["is_numeric"] == False:
@@ -217,7 +223,7 @@ def ocr_tax_form(image, form_type, image_file_path):
 					if loc["id"] not in form_info:
 						form_info[loc["id"]] = line
 					else:
-						form_info[loc["id"]] += line
+						form_info[loc["id"]] += "\n" + line
 					# draw the line on the output image
 					if IS_LOCAL:
 						startY = y + (i * 70) + 40

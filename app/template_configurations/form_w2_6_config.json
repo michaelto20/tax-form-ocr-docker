@@ -1,0 +1,147 @@
+{
+    "ssn" : {
+        "coord": [199, 220, 591, 340],
+        "keywords":["employee", "social","security", "number", "employee's"],
+        "is_numeric": false
+    },
+    "ein" : {
+        "coord": [199, 388,591, 478],
+        "keywords":["employer", "identification", "number", "(EIN)", "ID"],
+        "is_numeric": false
+    },
+    "employee_info" : {
+        "coord": [202, 894, 1397, 1068],
+        "keywords":["employee's","first", "initial", "last", "name", "address", "and", "zip", "code"],
+        "is_numeric": false
+    },
+    "state" : {
+        "coord": [199, 1559, 322, 1630],
+        "keywords":["force_parse"],
+        "is_numeric": false
+    },
+    "employer_state_id" : {
+        "coord": [336, 1562, 727, 1630],
+        "keywords":["force_parse"],
+        "is_numeric": false
+    },
+    "state_wages" : {
+        "coord": [740, 1560, 1065, 1630],
+        "keywords":["state", "wages", "tips", "etc", "st"],
+        "is_numeric": true
+    },
+    "state_income_tax" : {
+        "coord": [1077, 1560, 1401, 1632],
+        "keywords":["state", "income", "tax"],
+        "is_numeric": true
+    },
+    "wages" : {
+        "coord": [609, 216, 995, 265],
+        "keywords":["wages", "tips", "other", "compensation"],
+        "is_numeric": true
+    },
+    "federal_income_withheld" : {
+        "coord": [1012, 215, 1400, 265],
+        "keywords":["federal", "income", "tax", "withheld", "w/h"],
+        "is_numeric": true
+    },
+    "social_security_wages" : {
+        "coord": [607, 313, 993, 379],
+        "keywords":["social", "security", "wages", "tips"],
+        "is_numeric": true
+    },
+    "social_security_tax_withheld" : {
+        "coord": [1010, 312, 1401, 380],
+        "keywords":["social", "security", "tax", "withheld", "w/h"],
+        "is_numeric": true
+    },
+    "medicare_wages_and_tips" : {
+        "coord": [608, 422, 995, 477],
+        "keywords":["medicare", "wages", "and","tips"],
+        "is_numeric": true
+    },
+    "medicare_tax_withheld" : {
+        "coord": [1011, 423, 1400, 479],
+        "keywords":["medicare", "tax","withheld"],
+        "is_numeric": true
+    },
+    "social_security_tips" : {
+        "coord": [201, 1114, 590, 1180],
+        "keywords":["social", "security", "tips"],
+        "is_numeric": true
+    },
+    "allocated_tips" : {
+        "coord": [606, 1113, 995, 1178],
+        "keywords":["allocated", "tips"],
+        "is_numeric": true
+    },
+    "dependent_care_benefits" : {
+        "coord": [196, 1219, 590, 1264],
+        "keywords":["dependent", "care", "benefits"],
+        "is_numeric": false
+    },
+    "12a" : {
+        "coord": [1009, 1220, 1400, 1267],
+        "keywords":["12a", "code","see", "inst.", "for","box","12"],
+        "is_numeric": false
+    },
+    "12b" : {
+        "coord": [1011, 1303, 1401, 1349],
+        "keywords":["12b", "code"],
+        "is_numeric": false
+    },
+    "statutory_employee" : {
+        "coord": [357, 1312, 396, 1346],
+        "keywords":["force_parse"],
+        "is_numeric": false
+    },
+    "retirement_plan" : {
+        "coord": [360, 1391, 396, 1424],
+        "keywords":["force_parse"],
+        "is_numeric": false
+    },
+    "third_party_sick_pay" : {
+        "coord": [357, 1477, 395, 1511],
+        "keywords":["force_parse"],
+        "is_numeric": false
+    },
+    "other" : {
+        "coord": [536, 1299, 997, 1518],
+        "keywords":["force_parse"],
+        "is_numeric": false
+    },
+    "local_wages_tips" : {
+        "coord": [195, 1672, 593, 1743],
+        "keywords":["local", "wages", "tips", "etc"],
+        "is_numeric": true
+    },
+    "local_income_tax" : {
+        "coord": [604, 1673, 997, 1742],
+        "keywords":["local", "income", "tax"],
+        "is_numeric": true
+    },
+    "locality_name" : {
+        "coord": [1010, 1671, 1400, 1743],
+        "keywords":["locality","name"],
+        "is_numeric": false
+    },
+    "employer_name_address" : {
+        "coord": [206, 531, 1399, 730],
+        "keywords":["employer", "employer's", "employers", "name", "address", "and", "zip", "code"],
+        "is_numeric": false
+    },
+    "employee_first_name" : {
+        "coord": [167, 1067, 889, 1137],
+        "keywords":["employee", "employee's", "first", "name", "and", "initial"],
+        "is_numeric": false
+    },
+    "employee_last_name" : {
+        "coord": [919, 1061, 1641, 1133],
+        "keywords":["last", "name"],
+        "is_numeric": false
+    },
+    "nonqualified_plans" : {
+        "coord": [607, 1217, 994, 1263],
+        "keywords":["nonqualified", "plans"],
+        "is_numeric": false
+    }
+}
