@@ -13,9 +13,11 @@ from find_license import get_drivers_license_info, read_barcode_trial
 # from pyzbar.pyzbar import decode, ZBarSymbol
 import concurrent.futures
 from parallel_processing import process_ocr_location
+from pdf2image import convert_from_path, convert_from_bytes
 
 
-config = r'-l eng --oem 1 --psm 6'
+# config = r'-l eng --oem 1 --psm 12'
+config = r'-l eng --oem 2 --psm 6'
 SYMBOLS_TO_STRIP = r'!@#$,%^&*()-_+=`~|{}\/?—°'
 TRANSLATION_TABLE = dict.fromkeys(map(ord, SYMBOLS_TO_STRIP), None)
 CONFIG_DIR = 'template_configurations'
@@ -23,6 +25,7 @@ TEMPLATES_BASE_DIR = 'templates'
 W2_TEMPLATES_DIR = 'w2'
 DL_TEAMPLATES_DIR = 'dl'
 FORM_1099_TEMPLATES_DIR = 'form_1099_MISC'
+FORM_1040_TEMPLATES_DIR = 'form_1040'
 NO_TEMPLATE_MATCH_DIR = 'no_template_match'
 template_similarity_threshold = 20
 IS_LOCAL = True
@@ -35,7 +38,7 @@ if IS_LOCAL:
 # create a named tuple which we can use to create locations of the
 	# input document which we wish to OCR
 OCRLocation = namedtuple("OCRLocation", ["id", "bbox",
-	"filter_keywords", "is_numeric"])
+	"filter_keywords", "is_numeric", "is_checkbox"])
 
 
 
@@ -125,6 +128,8 @@ def ocr_tax_form(image, form_type, image_file_path):
 		return "success", None, results
 	elif form_type == "1099_MISC":
 		form_templates_path = os.path.join(TEMPLATES_BASE_DIR, FORM_1099_TEMPLATES_DIR)
+	elif form_type == "1040":
+		form_templates_path = os.path.join(TEMPLATES_BASE_DIR, FORM_1040_TEMPLATES_DIR)
 	else:
 		raise Exception("Form type not implemented")
 	print(f'form type: {form_type}')
@@ -148,7 +153,12 @@ def ocr_tax_form(image, form_type, image_file_path):
 
 	OCR_LOCATIONS = []
 	for key in ocr_configs:
-		OCR_LOCATIONS.append(OCRLocation(key, ocr_configs[key]['coord'], ocr_configs[key]['keywords'], ocr_configs[key]['is_numeric']))
+		OCR_LOCATIONS.append(
+			OCRLocation(key, 
+			ocr_configs[key]['coord'], 
+			ocr_configs[key]['keywords'], 
+			ocr_configs[key]['is_numeric'],
+			ocr_configs[key]['is_checkbox']))
 
 	# align the images
 	print("[INFO] aligning images...")
@@ -243,7 +253,7 @@ def ocr_image_segments(aligned, OCR_LOCATIONS):
 	parsingResults = []
 	# for loc in OCR_LOCATIONS:
 	# 	parsingResults += process_ocr_location(loc, aligned)
-	with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+	with concurrent.futures.ThreadPoolExecutor(max_workers=8) as executor:
 		future_form_templates_path = {executor.submit(process_ocr_location, loc, aligned): loc for loc in OCR_LOCATIONS}
 		for future in concurrent.futures.as_completed(future_form_templates_path):
 			# url = future_form_templates_path[future]
@@ -251,8 +261,9 @@ def ocr_image_segments(aligned, OCR_LOCATIONS):
 				parsingResults = parsingResults + future.result()
 			except Exception as exc:
 				print('blew up in parallel processing ocring data')
+				print(f'{exc.args}')
 	
-	return parsingResults
+		return parsingResults
 
 def save_no_template_match(image):
 	file_to_save = os.path.join(NO_TEMPLATE_MATCH_DIR, str(time.time()) + '.png')
@@ -290,6 +301,7 @@ def get_best_template(form_templates_path, image):
 
 			except Exception as exc:
 				print('blew up in parallel processing getting template')
+				print(f'{exc.args}')
 				# print(exc.message)
 			
 
@@ -328,11 +340,18 @@ if __name__ == "__main__":
 		help="path to input image that we'll align to template")
 	ap.add_argument("-f", "--form", required=True,
 		help="form to parse")
+	ap.add_argument("-p", "--ispdf", required=True,
+		help="is image pdf")
 	args = vars(ap.parse_args())
 	
 	# load the input image and template from disk
 	print("[INFO] loading images...")
-	image = cv2.imread(args["image"])
+	image = None
+	if args["ispdf"].lower() == 'true':
+		images = convert_from_path(args["image"])
+		image = cv2.cvtColor(np.array(images[1]), cv2.COLOR_RGB2BGR)
+	else:
+		image = cv2.imread(args["image"])
 
 	form_type = args["form"]
 

@@ -18,13 +18,15 @@ def save_to_templates_folder(image):
         raise Exception("Must set template directory")
     template_path = os.path.join(TEMPLATES_BASE_DIR, TEMPLATES_DIR, TEMPLATE_NAME)
     # cv2.imwrite(template_path, image)
-    template_path = r"C:/Development/tax-form-ocr-docker/app/templates/w2/form_w2_6_resized.png"
+    template_path = r"C:/Development/tax-form-ocr-docker/app/scans/W2-TSBooks_resized.jpg"
+    # template_path = r"C:/Development/tax-form-ocr-docker/app/templates/w2/form_w2_6_resized.png"
     cv2.imwrite(template_path, image)
 
 
 if __name__ == "__main__":
     print("Starting to resize image")
-    image_path = r"C:/Development/tax-form-ocr-docker/app/templates/w2/form_w2_6.png"
+    image_path = r"C:/Development/tax-form-ocr-docker/app/scans/W2-TSBooks.png"
+    # image_path = r"C:/Development/tax-form-ocr-docker/app/templates/w2/form_w2_6.png"
     resize_percentage = 300
     resized_image = resize_image(image_path, resize_percentage)
     save_to_templates_folder(resized_image)

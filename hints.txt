@@ -13,3 +13,6 @@ docker build -t tax-form-ocr-docker .
 aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 206046575545.dkr.ecr.us-east-1.amazonaws.com/tax-form-ocr
 docker tag  tax-form-ocr-docker:latest 206046575545.dkr.ecr.us-east-1.amazonaws.com/tax-form-ocr:latest
 docker push 206046575545.dkr.ecr.us-east-1.amazonaws.com/tax-form-ocr:latest
+
+
+-- To use pdf2image for windows, you need poppler. Download it from : https://github.com/oschwartz10612/poppler-windows/releases/ and add it to you PATH

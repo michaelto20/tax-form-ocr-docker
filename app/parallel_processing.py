@@ -2,7 +2,9 @@ import numpy as np
 import cv2
 import pytesseract
 import math
-import random
+import pandas as pd
+# import random
+pd.options.mode.chained_assignment = None  # default='warn'
 
 def process_ocr_location(loc, aligned):
 	parsingResults = []
@@ -15,28 +17,66 @@ def process_ocr_location(loc, aligned):
 
 	# (x, y, w, h) = loc.bbox
 	roi = aligned[y:y + h, x:x + w]
-	# cv2.imwrite(f'output/{random.randint(0,10000000000)}.png', roi)
-	# clean up image lines
-	# Apply edge detection method on the image 
-	roi_gray = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
-	roi = remove_lines(roi_gray)
-	# cv2.imwrite('roi_white.png', roi)
-	# OCR the ROI using Tesseract
-	# print('Binarize Image')
-	binarized_roi = binarize_image(roi)
 
-	gray_roi = cv2.cvtColor(binarized_roi, cv2.COLOR_BGR2RGB)
-	black_rgb = cv2.bitwise_not(gray_roi)
-	opened_black = cv2.morphologyEx(black_rgb, cv2.MORPH_OPEN, kernel)
-	# erosion = cv2.erode(rgb,kernel,iterations = 1)
-	opened = cv2.bitwise_not(opened_black)
-	
-	#TODO: Add white border to image to improve OCR
-	border_size = 5
-	opened_border = cv2.copyMakeBorder(opened,
-	border_size,border_size,border_size,border_size,
-	borderType=cv2.BORDER_CONSTANT, value=(255, 255, 255))
-	text = pytesseract.image_to_string(opened_border)
+	# try to OCR the image directly
+	text = ''
+	conf = 0
+	if not loc.is_checkbox:
+		text, conf = get_text_and_probabilities(roi)
+
+	# successfully OCR image as-is, no need for more preprocessing
+	if conf < 75:
+		# clean up image lines
+		# Apply edge detection method on the image 
+		roi_gray = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
+		roi_without_lines = remove_lines(roi_gray)
+		# cv2.imwrite('roi_white.png', roi)
+		# OCR the ROI using Tesseract
+		# print('Binarize Image')
+		binarized_roi = binarize_image(roi_without_lines)
+
+		# gray_roi = cv2.cvtColor(binarized_roi, cv2.COLOR_BGR2RGB)
+		black_rgb = cv2.bitwise_not(binarized_roi)
+		opened_black = cv2.morphologyEx(black_rgb, cv2.MORPH_OPEN, kernel)
+		# eroded_black = cv2.erode(opened_black,kernel,iterations = 1)
+		# erosion = cv2.erode(rgb,kernel,iterations = 1)
+		opened = cv2.bitwise_not(opened_black)
+		
+		#TODO: Add white border to image to improve OCR
+		border_size = 5
+		if loc.is_checkbox:
+			# pytesseract sucks at parsing just an X for a checkbox, use 20% heuristic instead
+			black_pixels = np.count_nonzero(opened==0)
+			h,w = opened.shape
+			num_pixels = h * w
+			black_ratio = (black_pixels * 100) // num_pixels
+			if black_ratio >= 20:
+				text = 'X'
+		else:
+			opened_border = cv2.copyMakeBorder(opened,
+			border_size,border_size,border_size,border_size,
+			borderType=cv2.BORDER_CONSTANT, value=(255, 255, 255))
+			# if opened_border.shape[0] < 75 or opened_border.shape[1] < 75:
+			# 	opened_border = cv2.resize(opened_border, (0,0), fx = 2, fy = 2)
+			text = pytesseract.image_to_string(opened_border)
+		if len(text) == 1 and text != 'X' and ord(text) == 12:
+			# ocr'd blank line, so try eroding the image and ocr again
+			black_ob = cv2.bitwise_not(opened_border)
+			eroded_ob = cv2.erode(black_ob,kernel,iterations = 1)
+			white_ob = cv2.bitwise_not(eroded_ob)
+			text = pytesseract.image_to_string(white_ob)
+		
+		# still can't read text, try again
+		if len(text) == 1 and text != 'X' and ord(text) == 12 or text.strip() == '':
+			closed_roi = cv2.morphologyEx(black_rgb, cv2.MORPH_CLOSE, kernel)
+			white_closed_roi = cv2.bitwise_not(closed_roi)
+
+			white_closed_border = cv2.copyMakeBorder(white_closed_roi,
+			border_size,border_size,border_size,border_size,
+			borderType=cv2.BORDER_CONSTANT, value=(255, 255, 255))
+			# if opened_border.shape[0] < 75 or opened_border.shape[1] < 75:
+			# 	opened_border = cv2.resize(opened_border, (0,0), fx = 2, fy = 2)
+			text = pytesseract.image_to_string(white_closed_border)
 
 	# break the text into lines and loop over them
 	for line in text.split("\n"):
@@ -59,6 +99,29 @@ def process_ocr_location(loc, aligned):
 			parsingResults.append((loc, line))
 
 	return parsingResults
+
+def get_text_and_probabilities(roi):
+	text = pytesseract.image_to_data(roi, output_type='data.frame')
+	text_cleaned = text[text.conf != -1]
+	text_cleaned['text'] = text_cleaned['text'].astype(str)
+
+	lines = text_cleaned.groupby(['page_num', 'block_num', 'par_num', 'line_num'])['text'] \
+                                     .apply(lambda x: ' '.join(list(x))).tolist()
+	# lines = text.groupby(['page_num', 'block_num', 'par_num', 'line_num'])['text'] \
+    #                                  .apply(lambda x: ' '.join(x))									 
+	confs = text_cleaned.groupby(['page_num', 'block_num', 'par_num', 'line_num'])['conf'].mean().tolist()
+		
+	# line_conf = []
+		
+	# for i in range(len(lines)):
+	# 	if lines[i].strip():
+	# 		line_conf.append((lines[i], round(confs[i],3)))
+	average_conf = 0
+	return_text = ''
+	if len(confs) > 0:
+		average_conf = np.array(confs).mean()
+		return_text = "".join([c for c in lines]).strip()
+	return return_text, average_conf
 
 
 def binarize_image(gray_image):

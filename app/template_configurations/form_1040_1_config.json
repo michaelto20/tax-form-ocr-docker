@@ -1,0 +1,254 @@
+{
+    "single" : {
+        "coord": [267, 190, 286, 209],
+        "keywords":["force_parse"],
+        "is_numeric": false,
+        "is_checkbox": true
+    },
+    "married_filing_jointly" : {
+        "coord": [386, 190, 406, 209],
+        "keywords":["force_parse"],
+        "is_numeric": false,
+        "is_checkbox": true
+    },
+    "married_filing_separately" : {
+        "coord": [627, 190, 645, 209],
+        "keywords":["force_parse"],
+        "is_numeric": false,
+        "is_checkbox": true
+    },
+    "qualifying_widower" : {
+        "coord": [1227, 190, 1246, 209],
+        "keywords":["force_parse"],
+        "is_numeric": false,
+        "is_checkbox": true
+    },
+    "head_of_house" : {
+        "coord": [946, 190, 966, 209],
+        "keywords":["force_parse"],
+        "is_numeric": false,
+        "is_checkbox": true
+    },
+    "first_name_middle_initial" : {
+        "coord": [104, 309, 656, 347],
+        "keywords":["your", "first", "name", "and", "middle", "initial"],
+        "is_numeric": false,
+        "is_checkbox": false
+    },
+    "last_name" : {
+        "coord": [662,307, 1297, 347],
+        "keywords":["last", "name"],
+        "is_numeric": false,
+        "is_checkbox": false
+    },
+    "ssn" : {
+        "coord": [1302, 310, 1598, 347],
+        "keywords":["your", "social", "security", "number"],
+        "is_numeric": false,
+        "is_checkbox": false
+    },
+    "spouse_first_name_middle_initial" : {
+        "coord": [103, 380, 656, 414],
+        "keywords":["if", "joint", "return", "spouse's", "first", "name", "and", "middle", "initial"],
+        "is_numeric": false,
+        "is_checkbox": false
+    },
+    "spouse_last_name" : {
+        "coord": [662, 375, 1297, 414],
+        "keywords":["last", "name"],
+        "is_numeric": false,
+        "is_checkbox": false
+    },
+    "spouse_ssn" : {
+        "coord": [1302, 380, 1598, 414],
+        "keywords":["spouse's", "social", "security", "number"],
+        "is_numeric": false,
+        "is_checkbox": false
+    },
+    "home_address" : {
+        "coord": [102, 444, 1157, 481],
+        "keywords":["and", "if", "you", "see", "instructions"],
+        "is_numeric": false,
+        "is_checkbox": false
+    },
+    "apartment_number" : {
+        "coord": [1162, 446, 1297, 481],
+        "keywords":["apt", "no"],
+        "is_numeric": false,
+        "is_checkbox": false
+    },
+    "election_campaign_taxpayer" : {
+        "coord": [1426, 523, 1446, 543],
+        "keywords":["force_parse"],
+        "is_numeric": false,
+        "is_checkbox": true
+    },
+    "election_campaign_spouse" : {
+        "coord": [1506, 524, 1526, 543],
+        "keywords":["force_parse"],
+        "is_numeric": false,
+        "is_checkbox": true
+    },
+    "city_state_zip" : {
+        "coord": [103, 512, 1298, 547],
+        "keywords":["city","town", "or", "post", "office", "state","and", "zip", "code", "if", "you", "have", "foreign", "address", "also", "complete", "spaces", "below", "see", "instructions"],
+        "is_numeric": false,
+        "is_checkbox": false
+    },
+    "foreign_count_name" : {
+        "coord": [100, 580, 717, 615],
+        "keywords":["foreign", "country", "name"],
+        "is_numeric": false,
+        "is_checkbox": false
+    },
+    "foreign_province" : {
+        "coord": [722, 579, 1118, 614],
+        "keywords":["foreign", "province", "state", "country"],
+        "is_numeric": false,
+        "is_checkbox": false
+    },
+    "foreign_postal_code" : {
+        "coord": [1121, 581, 1297, 615],
+        "keywords":["foreign", "postal", "code"],
+        "is_numeric": false,
+        "is_checkbox": false
+    },
+    "dependent_one_name" : {
+        "coord": [100, 802, 677, 831],
+        "keywords":["force_parse"],
+        "is_numeric": false,
+        "is_checkbox": false
+    },
+    "dependent_one_ssn" : {
+        "coord": [682, 802, 918, 832],
+        "keywords":["force_parse"],
+        "is_numeric": false,
+        "is_checkbox": false
+    },
+    "dependent_one_relationship" : {
+        "coord": [921, 802, 1156, 832],
+        "keywords":["force_parse"],
+        "is_numeric": false,
+        "is_checkbox": false
+    },
+    "dependent_one_child_tax_credit" : {
+        "coord": [1260, 807, 1279, 826],
+        "keywords":["force_parse"],
+        "is_numeric": false,
+        "is_checkbox": true
+    },
+    "2a" : {
+        "coord": [702, 967, 898, 998],
+        "keywords":["force_parse"],
+        "is_numeric": true,
+        "is_checkbox": false
+    },
+    "3a" : {
+        "coord": [701, 1002, 898, 1032],
+        "keywords":["force_parse"],
+        "is_numeric": true,
+        "is_checkbox": false
+    },
+    "4a" : {
+        "coord": [702, 1034, 898, 1065],
+        "keywords":["force_parse"],
+        "is_numeric": true,
+        "is_checkbox": false
+    },
+    "4c" : {
+        "coord": [702, 1067, 898, 1098],
+        "keywords":["force_parse"],
+        "is_numeric": true,
+        "is_checkbox": false
+    },
+    "5a" : {
+        "coord": [702, 1102, 898, 1131],
+        "keywords":["force_parse"],
+        "is_numeric": true,
+        "is_checkbox": false
+    },
+    "1" : {
+        "coord": [1401, 935, 1600, 964],
+        "keywords":["force_parse"],
+        "is_numeric": true,
+        "is_checkbox": false
+    },
+    "2b" : {
+        "coord": [1401, 968, 1600, 998],
+        "keywords":["force_parse"],
+        "is_numeric": true,
+        "is_checkbox": false
+    },
+    "3b" : {
+        "coord": [1401, 1001, 1599, 1032],
+        "keywords":["force_parse"],
+        "is_numeric": true,
+        "is_checkbox": false
+    },
+    "4b" : {
+        "coord": [1402, 1035, 1599, 1065],
+        "keywords":["force_parse"],
+        "is_numeric": true,
+        "is_checkbox": false
+    },
+    "4d" : {
+        "coord": [1402, 1068, 1599, 1097],
+        "keywords":["force_parse"],
+        "is_numeric": true,
+        "is_checkbox": false
+    },
+    "5b" : {
+        "coord": [1402, 1102, 1599, 1132],
+        "keywords":["force_parse"],
+        "is_numeric": true,
+        "is_checkbox": false
+    },
+    "6" : {
+        "coord": [1402, 1134, 1599, 1164],
+        "keywords":["force_parse"],
+        "is_numeric": true,
+        "is_checkbox": false
+    },
+    "7a" : {
+        "coord": [1402, 1168, 1599, 1198],
+        "keywords":["force_parse"],
+        "is_numeric": true,
+        "is_checkbox": false
+    },
+    "7b" : {
+        "coord": [1402, 1202, 1599, 1231],
+        "keywords":["force_parse"],
+        "is_numeric": true,
+        "is_checkbox": false
+    },
+    "8b" : {
+        "coord": [1402, 1269, 1599, 1297],
+        "keywords":["force_parse"],
+        "is_numeric": true,
+        "is_checkbox": false
+    },
+    "11a" : {
+        "coord": [1402, 1302, 1599, 1397],
+        "keywords":["force_parse"],
+        "is_numeric": true,
+        "is_checkbox": false
+    },
+    "11b" : {
+        "coord": [1402, 1402, 1600, 1431],
+        "keywords":["force_parse"],
+        "is_numeric": true,
+        "is_checkbox": false
+    },
+    "9" : {
+        "coord": [1144, 1298, 1335, 1330],
+        "keywords":["force_parse"],
+        "is_numeric": true,
+        "is_checkbox": false
+    },
+    "10" : {
+        "coord": [1142, 1334, 1337, 1364],
+        "keywords":["force_parse"],
+        "is_numeric": true,
+        "is_checkbox": false
+    }
+}

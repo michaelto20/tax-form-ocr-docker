@@ -2,81 +2,97 @@
     "ssn" : {
         "coord": [1279, 2261, 1675, 2313],
         "keywords":["employee", "ssa", "number", "employee's"],
-        "is_numeric": false
+        "is_numeric": false,
+        "is_checkbox": false
     },
     "ein" : {
         "coord": [874, 2261, 1270, 2315],
         "keywords":["employer", "FED", "ID", "number", "employer's"],
-        "is_numeric": false
+        "is_numeric": false,
+        "is_checkbox": false
     },
     "12a" : {
         "coord": [1391, 2447, 1661, 2500],
         "keywords":["force_parse"],
-        "is_numeric": true
+        "is_numeric": true,
+        "is_checkbox": false
     },
     "12b" : {
         "coord": [1388, 2509, 1669, 2545],
         "keywords":["force_parse"],
-        "is_numeric": true
+        "is_numeric": true,
+        "is_checkbox": false
     },
     "12c" : {
         "coord": [1388, 2553, 1661, 2588],
         "keywords":["force_parse"],
-        "is_numeric": true
+        "is_numeric": true,
+        "is_checkbox": false
     },
     "employee_info" : {
         "coord": [874, 2701, 1672, 2909],
         "keywords":["employee", "employee's", "name", "address", "and", "zip", "code"],
-        "is_numeric": false
+        "is_numeric": false,
+        "is_checkbox": false
     },
     "state" : {
-        "coord": [875, 2916, 987, 2976],
+        "coord": [874, 2941, 987, 2976],
         "keywords":["state", "15"],
-        "is_numeric": false
+        "is_numeric": false,
+        "is_checkbox": false
     },
     "employer_state_id" : {
         "coord": [996, 2915, 1276, 2977],
         "keywords":["employer", "employer's", "state", "ID", "no"],
-        "is_numeric": false
+        "is_numeric": false,
+        "is_checkbox": false
     },
     "state_wages" : {
         "coord": [1282, 2916, 1671, 2976],
         "keywords":["state", "wages", "tips", "etc"],
-        "is_numeric": false
+        "is_numeric": false,
+        "is_checkbox": false
     },
     "state_income_tax" : {
-        "coord": [874, 2984, 1272, 3043],
+        "coord": [874, 2984, 1275, 3042],
         "keywords":["state", "income", "tax"],
-        "is_numeric": true
+        "is_numeric": true,
+        "is_checkbox": false
     },
     "wages" : {
         "coord": [874, 1693, 1270, 1756],
         "keywords":["wages", "tips", "other", "comp"],
-        "is_numeric": true
+        "is_numeric": true,
+        "is_checkbox": false
     },
     "federal_income_withheld" : {
         "coord": [1280, 1692, 1672, 1756],
         "keywords":["federal", "income", "tax", "withheld"],
-        "is_numeric": true
+        "is_numeric": true,
+        "is_checkbox": false
     },
     "ssn_wages" : {
         "coord": [875, 1765, 1267, 1822],
         "keywords":["social", "security", "wages"],
-        "is_numeric": true
+        "is_numeric": true,
+        "is_checkbox": false
     },
     "ssn_tax_withheld" : {
         "coord": [1281, 1764, 1672, 1822],
         "keywords":["social", "security", "tax", "withheld"],
-        "is_numeric": true
+        "is_numeric": true,
+        "is_checkbox": false
     },
     "medicare_wages" : {
         "coord": [876, 1830, 1267, 1890],
         "keywords":["medicare", "wages", "and", "tips"],
-        "is_numeric": true
+        "is_numeric": true,
+        "is_checkbox": false
     },
     "medicare_tax_withheld" : {
         "coord": [1280, 1830, 1673, 1889],
         "keywords":["medicare", "tax", "withheld"],
-        "is_numeric": true
+        "is_numeric": true,
+        "is_checkbox": false
     }
 }

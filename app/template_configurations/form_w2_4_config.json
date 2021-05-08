@@ -2,51 +2,61 @@
     "ssn" : {
         "coord": [696, 227, 1211, 308],
         "keywords":["employee", "social","security", "number", "employee's"],
-        "is_numeric": true
+        "is_numeric": true,
+        "is_checkbox": false
     },
     "ein" : {
         "coord": [235, 326, 1414, 402],
         "keywords":["employer", "identification", "number", "(EIN)"],
-        "is_numeric": true
+        "is_numeric": true,
+        "is_checkbox": false
     },
     "12a" : {
         "coord": [2127, 851, 2491, 896],
         "keywords":["force_parse"],
-        "is_numeric": true
+        "is_numeric": true,
+        "is_checkbox": false
     },
     "employee_info" : {
         "coord": [228, 862, 1419, 1204],
         "keywords":["employee", "employee's","first", "initial", "last", "name", "address", "and"],
-        "is_numeric": false
+        "is_numeric": false,
+        "is_checkbox": false
     },
     "state" : {
         "coord": [227, 1307, 335, 1354],
         "keywords":["force_parse"],
-        "is_numeric": false
+        "is_numeric": false,
+        "is_checkbox": false
     },
     "employer_state_id" : {
         "coord": [355, 1306, 764, 1353],
         "keywords":["force_parse"],
-        "is_numeric": false
+        "is_numeric": false,
+        "is_checkbox": false
     },
     "state_wages" : {
         "coord": [783, 1310, 1115, 1356],
         "keywords":["state", "wages", "tips", "etc"],
-        "is_numeric": true
+        "is_numeric": true,
+        "is_checkbox": false
     },
     "state_income_tax" : {
         "coord": [1134, 1311, 1417, 1356],
         "keywords":["state", "income", "tax"],
-        "is_numeric": true
+        "is_numeric": true,
+        "is_checkbox": false
     },
     "wages" : {
         "coord": [1432, 358, 1942, 402],
         "keywords":["wages", "tips", "other", "compensation"],
-        "is_numeric": true
+        "is_numeric": true,
+        "is_checkbox": false
     },
     "federal_income_withheld" : {
         "coord": [1965, 357, 2486, 398],
         "keywords":["federal", "income", "tax", "withheld"],
-        "is_numeric": true
+        "is_numeric": true,
+        "is_checkbox": false
     }
 }
