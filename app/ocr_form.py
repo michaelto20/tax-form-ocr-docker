@@ -349,7 +349,7 @@ if __name__ == "__main__":
 	image = None
 	if args["ispdf"].lower() == 'true':
 		images = convert_from_path(args["image"])
-		image = cv2.cvtColor(np.array(images[1]), cv2.COLOR_RGB2BGR)
+		image = cv2.cvtColor(np.array(images[0]), cv2.COLOR_RGB2BGR)
 	else:
 		image = cv2.imread(args["image"])
 
