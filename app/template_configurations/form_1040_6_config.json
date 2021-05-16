@@ -48,7 +48,7 @@
         "is_checkbox": false
     },
     "15" : {
-        "coord": [1344, 269, 1603, 207],
+        "coord": [1344, 269, 1603, 298],
         "keywords":["force_parse"],
         "is_numeric": true,
         "is_checkbox": false

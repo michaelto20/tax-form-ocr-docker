@@ -5,7 +5,7 @@ import numpy as np
 
 
 BASE_DER = 'app' 
-TEMPLATE_DIR = os.path.join(BASE_DER, 'templates')
+TEMPLATE_DIR = os.path.join(BASE_DER, 'scans')
 TEMPLATE_TYPE = os.path.join(TEMPLATE_DIR,'form_1040')
 
 def convert_pdf_template_to_image(pdf_filename, start_template_count):
@@ -18,6 +18,6 @@ def convert_pdf_template_to_image(pdf_filename, start_template_count):
         start_template_count += 1
 
 if __name__ == "__main__":
-    start_template_count = 7
-    pdf_filename_to_convert = r'C:\Users\Michael Townsend\Downloads\rapidOCR_images\1040\TurboTax_1040.pdf'
+    start_template_count = 6
+    pdf_filename_to_convert = r'C:\Users\Michael Townsend\Downloads\rapidOCR_images\1040\TaxAct_1040.pdf'
     convert_pdf_template_to_image(pdf_filename_to_convert, start_template_count)

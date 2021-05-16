@@ -28,7 +28,7 @@ FORM_1099_TEMPLATES_DIR = 'form_1099_MISC'
 FORM_1040_TEMPLATES_DIR = 'form_1040'
 NO_TEMPLATE_MATCH_DIR = 'no_template_match'
 template_similarity_threshold = 20
-IS_LOCAL = True
+IS_LOCAL = False
 if IS_LOCAL:
 	NO_TEMPLATE_MATCH_DIR = os.path.join('app', NO_TEMPLATE_MATCH_DIR)
 	TEMPLATES_BASE_DIR = os.path.join('app', TEMPLATES_BASE_DIR)
@@ -65,7 +65,8 @@ def fix_image_dimensions(image):
 	# only checking height assumes image dimensions aren't crazy
 	optimal_height = 2000	# size in pixels
 	print(f'Image shape: {image.shape}')
-	h,w,c = image.shape
+	h = image.shape[0]
+	w = image.shape[1]
 
 	if h <= 1900 or h >= 2200:
 		print('Changing image\'s size')
@@ -252,6 +253,7 @@ def ocr_tax_form(image, form_type, image_file_path):
 def ocr_image_segments(aligned, OCR_LOCATIONS):
 	parsingResults = []
 	# for loc in OCR_LOCATIONS:
+	# 	print(loc.id)
 	# 	parsingResults += process_ocr_location(loc, aligned)
 	with concurrent.futures.ThreadPoolExecutor(max_workers=8) as executor:
 		future_form_templates_path = {executor.submit(process_ocr_location, loc, aligned): loc for loc in OCR_LOCATIONS}
