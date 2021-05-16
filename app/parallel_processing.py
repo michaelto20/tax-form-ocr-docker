@@ -27,7 +27,7 @@ def process_ocr_location(loc, aligned):
 	# successfully OCR image as-is, no need for more preprocessing
 	if conf < 75:
 		# clean up image lines
-		# Apply edge detection method on the image 
+		# Apply edge detection method on the image
 		roi_gray = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
 		roi_without_lines = remove_lines(roi_gray)
 		# cv2.imwrite('roi_white.png', roi)
@@ -41,7 +41,7 @@ def process_ocr_location(loc, aligned):
 		# eroded_black = cv2.erode(opened_black,kernel,iterations = 1)
 		# erosion = cv2.erode(rgb,kernel,iterations = 1)
 		opened = cv2.bitwise_not(opened_black)
-		
+
 		#TODO: Add white border to image to improve OCR
 		border_size = 5
 		if loc.is_checkbox:
@@ -65,7 +65,7 @@ def process_ocr_location(loc, aligned):
 			eroded_ob = cv2.erode(black_ob,kernel,iterations = 1)
 			white_ob = cv2.bitwise_not(eroded_ob)
 			text = pytesseract.image_to_string(white_ob)
-		
+
 		# still can't read text, try again
 		if len(text) == 1 and text != 'X' and ord(text) == 12 or text.strip() == '':
 			closed_roi = cv2.morphologyEx(black_rgb, cv2.MORPH_CLOSE, kernel)
@@ -79,6 +79,7 @@ def process_ocr_location(loc, aligned):
 			text = pytesseract.image_to_string(white_closed_border)
 
 	# break the text into lines and loop over them
+	# print(f'{text}')
 	for line in text.split("\n"):
 		# if the line is empty, ignore it
 		if len(line) == 0:
@@ -108,11 +109,11 @@ def get_text_and_probabilities(roi):
 	lines = text_cleaned.groupby(['page_num', 'block_num', 'par_num', 'line_num'])['text'] \
                                      .apply(lambda x: ' '.join(list(x))).tolist()
 	# lines = text.groupby(['page_num', 'block_num', 'par_num', 'line_num'])['text'] \
-    #                                  .apply(lambda x: ' '.join(x))									 
+    #                                  .apply(lambda x: ' '.join(x))
 	confs = text_cleaned.groupby(['page_num', 'block_num', 'par_num', 'line_num'])['conf'].mean().tolist()
-		
+
 	# line_conf = []
-		
+
 	# for i in range(len(lines)):
 	# 	if lines[i].strip():
 	# 		line_conf.append((lines[i], round(confs[i],3)))
@@ -147,19 +148,19 @@ def remove_lines(roi):
 	# masked_roi_not = cv2.bitwise_not(roi, roi, mask=mask)
 	# cv2.imwrite('roi_white.png', roi)
 	return roi
-	
+
 
 
 def create_lines_mask(lines, roi):
 	mask = np.zeros_like(roi)
 
 	# use major lines to create mask
-	
+
 	for x1,y1,x2,y2 in lines[0]:
 		cv2.line(mask,(x1,y1),(x2,y2),(255,255,255),2)
 
 	return mask
-	
+
 
 
 

@@ -65,6 +65,7 @@ def fix_image_dimensions(image):
 	# only checking height assumes image dimensions aren't crazy
 	optimal_height = 2000	# size in pixels
 	print(f'Image shape: {image.shape}')
+	# h,w,c = image.shape
 	h = image.shape[0]
 	w = image.shape[1]
 

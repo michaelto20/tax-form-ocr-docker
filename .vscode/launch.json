@@ -22,7 +22,7 @@
             // "args": ["--image", "C:/Users/Michael Townsend/Downloads/rapidOCR_images/1040/H&R_Block_1040.pdf", "--form", "1040", "--ispdf", "True"]
             // "args": ["--image", "C:/Users/Michael Townsend/Downloads/rapidOCR_images/1040/TaxAct_1040.pdf", "--form", "1040", "--ispdf", "True"]
             // "args": ["--image", "C:/Users/Michael Townsend/Downloads/rapidOCR_images/1040/TurboTax_1040.pdf", "--form", "1040", "--ispdf", "True"]
-            "args": ["--image", "app/scans/form_1040/form_1040_7.png", "--form", "1040", "--ispdf", "False"]
+            "args": ["--image", "app/scans/form_1040/form_1040_6.png", "--form", "1040", "--ispdf", "False"]
 
             
         }

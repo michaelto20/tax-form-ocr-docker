@@ -82,9 +82,9 @@ def handler(event, context):
 if __name__ == "__main__":
     event = {}
     event["ispdf"] = "False"
-    event["form_type"] = "w2"
+    event["form_type"] = "1040"
 
-    with open(r"app/scans/W2-TSBooks.png", "rb") as pdf_file:
+    with open(r"app/scans/form_1040/form_1040_6.png", "rb") as pdf_file:
         encoded_string = base64.b64encode(pdf_file.read())
         event["image"] = encoded_string.decode('utf-8')
     
